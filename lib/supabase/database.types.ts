@@ -12,6 +12,7 @@ export interface Database {
       analyses: {
         Row: {
           id: string;
+          user_id: string;
           property_name: string;
           registration_number: string;
           pdf_url: string | null;
@@ -19,11 +20,10 @@ export interface Database {
           status: 'pending' | 'processing' | 'completed' | 'error';
           created_at: string;
           updated_at: string;
-          client_id: string | null;
-          client_name: string | null;
         };
         Insert: {
           id?: string;
+          user_id: string;
           property_name: string;
           registration_number: string;
           pdf_url?: string | null;
@@ -31,11 +31,10 @@ export interface Database {
           status?: 'pending' | 'processing' | 'completed' | 'error';
           created_at?: string;
           updated_at?: string;
-          client_id?: string | null;
-          client_name?: string | null;
         };
         Update: {
           id?: string;
+          user_id?: string;
           property_name?: string;
           registration_number?: string;
           pdf_url?: string | null;
@@ -43,34 +42,32 @@ export interface Database {
           status?: 'pending' | 'processing' | 'completed' | 'error';
           created_at?: string;
           updated_at?: string;
-          client_id?: string | null;
-          client_name?: string | null;
         };
       };
-      analysis_details: {
+      analysis_data: {
         Row: {
           id: string;
           analysis_id: string;
-          extracted_data: Json | null;
-          alerts: Json | null;
-          chain_of_title: Json | null;
-          notes: string | null;
+          tab_name: string;
+          content: Json;
+          created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
           analysis_id: string;
-          extracted_data?: Json | null;
-          alerts?: Json | null;
-          chain_of_title?: Json | null;
-          notes?: string | null;
+          tab_name: string;
+          content: Json;
+          created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
           analysis_id?: string;
-          extracted_data?: Json | null;
-          alerts?: Json | null;
-          chain_of_title?: Json | null;
-          notes?: string | null;
+          tab_name?: string;
+          content?: Json;
+          created_at?: string;
+          updated_at?: string;
         };
       };
     };
