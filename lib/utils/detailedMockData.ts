@@ -1,0 +1,220 @@
+import { Analysis, AnalysisDetail, Alert, ChainOfTitleItem } from '@/types';
+
+export const detailedAnalysisMock: Analysis = {
+  id: 'det-001',
+  propertyName: 'Apartamento 1202 - Ed. Horizon Premium - Rua Augusta, 1500',
+  registrationNumber: '98.765',
+  pdfUrl: '/mock/matricula.pdf',
+  riskScore: 72,
+  status: 'completed',
+  createdAt: '2026-03-18T10:30:00Z',
+  updatedAt: '2026-03-18T10:45:00Z',
+  clientName: 'Investimentos ABC Ltda',
+  clientId: 'client-001',
+};
+
+export const detailedAnalysisData: AnalysisDetail = {
+  id: 'det-001',
+  analysisId: 'det-001',
+  extractedData: {
+    tipoImovel: 'Apartamento',
+    matricula: '98.765',
+    oficio: '02',
+    comarca: 'São Paulo',
+    estado: 'SP',
+    inscricaoImobiliaria: '123.456.789.000-1',
+    endereco: {
+      logradouro: 'Rua Augusta',
+      numero: '1500',
+      complemento: 'Apto 1202, Bloco B',
+      bairro: 'Consolação',
+      cidade: 'São Paulo',
+      estado: 'SP',
+      cep: '01305-100',
+    },
+    metragem: {
+      areaPrivativa: 145.5,
+      areaComum: 45.2,
+      areaTotal: 190.7,
+      unidadeMedida: 'm²',
+    },
+    valorVenal: 2500000.00,
+    situacao: 'Ativa',
+  },
+  alerts: [
+    {
+      type: 'impenhorability',
+      title: 'Impenhorabilidade Residencial',
+      description: 'Consta cláusula de impenhorabilidade urbana no registro nº 45. O imóvel pode ser considerado bem de família.',
+      severity: 'high',
+    },
+    {
+      type: 'mortgage',
+      title: 'Hipoteca em Aberto',
+      description: 'Hipoteca registrada em favor do Banco XYZ S.A. no valor de R$ 1.200.000,00. Situação: Ativa.',
+      severity: 'high',
+    },
+    {
+      type: 'pledge',
+      title: 'Penhor de Quotas Condominiais',
+      description: 'Penhor de cotas condominiais registrado em favor do Condomínio Ed. Horizon Premium por débito de taxas.',
+      severity: 'medium',
+    },
+    {
+      type: 'usufruct',
+      title: 'Usufruto Vitalício',
+      description: 'Consta usufruto vitalício registrado em favor de Maria Aparecida Santos (CPF: 123.456.789-00).',
+      severity: 'medium',
+    },
+  ],
+  chainOfTitle: [
+    {
+      date: '2010-05-15',
+      grantor: 'Incorporadora Horizonte Ltda',
+      grantee: 'João Carlos Ferreira',
+      transaction: 'Venda e Compra',
+      document: 'Escritura Pública nº 45.789',
+    },
+    {
+      date: '2015-08-22',
+      grantor: 'João Carlos Ferreira',
+      grantee: 'Roberto Almeida e Maria Aparecida Santos',
+      transaction: 'Doação em Partilha',
+      document: 'Escritura Pública nº 67.234',
+    },
+    {
+      date: '2020-03-10',
+      grantor: 'Roberto Almeida (falecido)',
+      grantee: 'Maria Aparecida Santos (herança)',
+      transaction: 'Herança',
+      document: 'Termo de Abertura de Sucessão nº 12.456',
+    },
+    {
+      date: '2024-01-18',
+      grantor: 'Maria Aparecida Santos',
+      grantee: 'Carlos Eduardo Mendes',
+      transaction: 'Venda e Compra com Reserva de Usufruto',
+      document: 'Escritura Pública nº 89.123',
+    },
+  ],
+  notes: 'Matrícula com múltiplos ônus. Recomenda-se cuidadosa análise antes de aquisição.',
+};
+
+export const mockOwners = [
+  {
+    id: 1,
+    nome: 'Carlos Eduardo Mendes',
+    tipo: 'Proprietário Pleno (Nua Propriedade)',
+    cpfCnpj: '456.789.123-88',
+    dataAquisicao: '18/01/2024',
+    formaAquisicao: 'Compra e Venda',
+    percentualPropriedade: '100% (nua)',
+  },
+  {
+    id: 2,
+    nome: 'Maria Aparecida Santos',
+    tipo: 'Usufrutuária',
+    cpfCnpj: '123.456.789-00',
+    dataAquisicao: '18/01/2024',
+    formaAquisicao: 'Reserva de Usufruto',
+    percentualPropriedade: 'Usufruto Vitalício',
+  },
+];
+
+export const mockEncumbrances = [
+  {
+    id: 1,
+    tipo: 'Hipoteca',
+    descricao: 'Hipoteca em favor de Banco XYZ S.A.',
+    valor: 'R$ 1.200.000,00',
+    dataRegistro: '20/02/2024',
+    numeroRegistro: '98.765.1',
+    situacao: 'Ativa',
+    gravame: 'Alto',
+  },
+  {
+    id: 2,
+    tipo: 'Penhor',
+    descricao: 'Penhor de cotas condominiais - Condomínio Ed. Horizon Premium',
+    valor: 'R$ 45.230,50',
+    dataRegistro: '15/12/2023',
+    numeroRegistro: '98.765.2',
+    situacao: 'Ativa',
+    gravame: 'Médio',
+  },
+  {
+    id: 3,
+    tipo: 'Cláusula de Impenhorabilidade',
+    descricao: 'Declaração de impenhorabilidade urbana conforme Lei 8.009/90',
+    valor: '-',
+    dataRegistro: '22/08/2015',
+    numeroRegistro: '98.765.3',
+    situacao: 'Ativa',
+    gravame: 'Alto',
+  },
+  {
+    id: 4,
+    tipo: 'Usufruto',
+    descricao: 'Usufruto vitalício em favor de Maria Aparecida Santos',
+    valor: '-',
+    dataRegistro: '18/01/2024',
+    numeroRegistro: '98.765.4',
+    situacao: 'Ativa',
+    gravame: 'Médio',
+  },
+];
+
+export const mockAverbatations = [
+  {
+    id: 1,
+    tipo: 'Registro de Inscrição',
+    descricao: 'Registro de inscrição imobiliária municipal nº 123.456.789.000-1',
+    data: '15/05/2010',
+    numero: '1º',
+  },
+  {
+    id: 2,
+    tipo: 'Averbação de Construção',
+    descricao: 'Averbação de projeto de construção aprovado pela Prefeitura',
+    data: '10/03/2009',
+    numero: '2º',
+  },
+  {
+    id: 3,
+    tipo: 'Averbação de Habite-se',
+    descricao: 'Habite-se emitido pela Prefeitura de São Paulo',
+    data: '20/04/2010',
+    numero: '3º',
+  },
+  {
+    id: 4,
+    tipo: 'Averbação de Matrícula Origem',
+    descricao: 'Matrícula originária nº 45.678 do antigo 2º Ofício',
+    data: '15/05/2010',
+    numero: '4º',
+  },
+  {
+    id: 5,
+    tipo: 'Averbação de Inadimplência',
+    descricao: 'Notificação de inadimplência de cotas condominiais',
+    data: '10/11/2023',
+    numero: '5º',
+  },
+];
+
+export const mockDueDiligenceChecklist = [
+  { id: 1, categoria: 'Documentação', item: 'Matrícula atualizada (últimos 30 dias)', status: 'completed', observacao: 'Matrícula obtida em 18/03/2026' },
+  { id: 2, categoria: 'Documentação', item: 'Cópia do CPF/CNPJ do vendedor', status: 'pending', observacao: 'Aguardando documentação' },
+  { id: 3, categoria: 'Documentação', item: 'Certidão de casamento ou nascimento', status: 'pending', observacao: 'Necessário para validar estado civil' },
+  { id: 4, categoria: 'Regularidade', item: 'IPTU quitado (últimos 5 anos)', status: 'completed', observacao: 'Certidão negativa obtida' },
+  { id: 5, categoria: 'Regularidade', item: 'Condomínio sem débitos', status: 'attention', observacao: 'Consta penhor por inadimplência' },
+  { id: 6, categoria: 'Regularidade', item: 'Habite-se/Certificado de conclusão', status: 'completed', observacao: 'Averbação nº 3º na matrícula' },
+  { id: 7, categoria: 'Ônus e Gravames', item: 'Hipotecas quitadas ou com aval do credor', status: 'attention', observacao: 'Hipoteca ativa de R$ 1,2M' },
+  { id: 8, categoria: 'Ônus e Gravames', item: 'Penhoras e arrestos não existem', status: 'attention', observacao: 'Consta penhor condominial' },
+  { id: 9, categoria: 'Ônus e Gravames', item: 'Impenhorabilidade verificada', status: 'attention', observacao: 'Consta cláusula de impenhorabilidade' },
+  { id: 10, categoria: 'Ônus e Gravames', item: 'Usufruto/Alienação/Fideicomissos verificados', status: 'attention', observacao: 'Usufruto vitalício ativo' },
+  { id: 11, categoria: 'Cadeia Dominial', item: 'Últimos 5 anos de transmissões verificados', status: 'completed', observacao: '4 transmissões identificadas' },
+  { id: 12, categoria: 'Cadeia Dominial', item: 'Títulos anteriores sem vícios', status: 'pending', observacao: 'Requer análise mais profunda' },
+  { id: 13, categoria: 'Zoneamento', item: 'Conformidade com zoneamento urbano', status: 'completed', observacao: 'Zona Mista (ZM)' },
+  { id: 14, categoria: 'Ambiental', item: 'Licenças ambientais (se aplicável)', status: 'not_applicable', observacao: 'Não aplicável para apartamento' },
+];
