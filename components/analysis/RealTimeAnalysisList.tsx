@@ -32,11 +32,11 @@ export function RealTimeAnalysisList() {
           id: item.id,
           propertyName: item.property_name,
           registrationNumber: item.registration_number,
-          pdfUrl: item.pdf_url,
-          riskScore: item.risk_score,
-          status: item.status,
-          createdAt: item.created_at,
-          updatedAt: item.updated_at,
+          pdfUrl: item.pdf_url ?? undefined,
+          riskScore: item.risk_score ?? 0,
+          status: (item.status as Analysis['status']) ?? 'pending',
+          createdAt: item.created_at ?? '',
+          updatedAt: item.updated_at ?? '',
         }));
 
         setAnalyses(transformedData);

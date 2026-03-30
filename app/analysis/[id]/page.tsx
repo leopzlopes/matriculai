@@ -6,22 +6,35 @@ import { OwnersTab } from '@/components/analysis/tabs/OwnersTab';
 import { EncumbrancesTab } from '@/components/analysis/tabs/EncumbrancesTab';
 import { AverbatationsTab } from '@/components/analysis/tabs/AverbatationsTab';
 import { DueDiligenceChecklistTab } from '@/components/analysis/tabs/DueDiligenceChecklistTab';
-import { detailedAnalysisMock } from '@/lib/utils/detailedMockData';
+import { AnalysisTrigger } from '@/components/analysis/AnalysisTrigger';
+import { getAnalysis } from '@/lib/actions/analyses';
 import { getRiskColor, getRiskLabel } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  ArrowLeft, 
-  FileText, 
-  Building2, 
-  Users, 
-  Scale, 
-  ClipboardList, 
+import type {
+  GeneralSummaryData,
+  PropertyData,
+  Owner,
+  Encumbrance,
+  Averbation,
+  ChecklistItem,
+  Modulo1Result,
+  Modulo2Result,
+  Modulo3Result,
+} from '@/lib/ai/types';
+import {
+  ArrowLeft,
+  FileText,
+  Building2,
+  Users,
+  Scale,
+  ClipboardList,
   CheckSquare,
   Download,
   Share2
 } from 'lucide-react';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 interface AnalysisDetailPageProps {
   params: Promise<{
@@ -31,36 +44,54 @@ interface AnalysisDetailPageProps {
 
 export default async function AnalysisDetailPage({ params }: AnalysisDetailPageProps) {
   const { id } = await params;
-  const analysis = detailedAnalysisMock;
-  const riskColor = getRiskColor(analysis.riskScore);
-  const riskLabel = getRiskLabel(analysis.riskScore);
+  const result = await getAnalysis(id);
+
+  if (!result) {
+    notFound();
+  }
+
+  const { analysis, tabData } = result;
+  const riskScore = analysis.risk_score ?? 0;
+  const riskColor = getRiskColor(riskScore);
+  const riskLabel = getRiskLabel(riskScore);
+
+  // Extract typed tab data (cast via unknown — Supabase Json type is too broad)
+  const generalSummaryData = tabData['general_summary'] as unknown as GeneralSummaryData | undefined;
+  const registralData = tabData['registral'] as unknown as Modulo1Result | undefined;
+  const penhorabilidadeData = tabData['penhorabilidade'] as unknown as Modulo2Result | undefined;
+
+  const propertyData: PropertyData | undefined = registralData?.property_data;
+  const ownersData: Owner[] | undefined = registralData?.owners;
+  const encumbrancesData: Encumbrance[] | undefined = registralData?.encumbrances;
+  const averbatationsData: Averbation[] | undefined = registralData?.averbatations;
+  const checklistData: ChecklistItem[] | undefined = penhorabilidadeData?.checklist;
 
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
         {/* Back Link and Header */}
         <div className="mb-6">
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900 mb-4"
           >
             <ArrowLeft className="w-4 h-4 mr-1" />
             Voltar para Dashboard
           </Link>
-          
+
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <h1 className="text-2xl font-bold text-slate-900 mb-1">
-                {analysis.propertyName}
+                {analysis.property_name}
               </h1>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-slate-500">
-                  Matrícula {analysis.registrationNumber}
+                  Matrícula {analysis.registration_number}
                 </span>
                 <Badge className={`${riskColor} text-white`}>
-                  Score: {analysis.riskScore}/100 - {riskLabel}
+                  Score: {riskScore}/100 - {riskLabel}
                 </Badge>
               </div>
             </div>
@@ -76,6 +107,9 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
             </div>
           </div>
         </div>
+
+        {/* Processing Banner */}
+        <AnalysisTrigger analysisId={analysis.id} status={analysis.status ?? 'pending'} />
 
         {/* Tabs */}
         <Tabs defaultValue="summary" className="w-full">
@@ -107,27 +141,27 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
           </TabsList>
 
           <TabsContent value="summary" className="mt-0">
-            <GeneralSummaryTab />
+            <GeneralSummaryTab data={generalSummaryData} />
           </TabsContent>
 
           <TabsContent value="property" className="mt-0">
-            <PropertyDataTab />
+            <PropertyDataTab data={propertyData} />
           </TabsContent>
 
           <TabsContent value="owners" className="mt-0">
-            <OwnersTab />
+            <OwnersTab data={ownersData} />
           </TabsContent>
 
           <TabsContent value="encumbrances" className="mt-0">
-            <EncumbrancesTab />
+            <EncumbrancesTab data={encumbrancesData} />
           </TabsContent>
 
           <TabsContent value="averbatations" className="mt-0">
-            <AverbatationsTab />
+            <AverbatationsTab data={averbatationsData} />
           </TabsContent>
 
           <TabsContent value="checklist" className="mt-0">
-            <DueDiligenceChecklistTab />
+            <DueDiligenceChecklistTab data={checklistData} />
           </TabsContent>
         </Tabs>
       </main>

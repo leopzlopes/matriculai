@@ -1,79 +1,65 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { mockDueDiligenceChecklist } from '@/lib/utils/detailedMockData';
-import { CheckCircle2, XCircle, AlertCircle, MinusCircle, Clock } from 'lucide-react';
+import { CheckCircle2, XCircle, AlertCircle, MinusCircle, Clock, Loader2 } from 'lucide-react';
+import type { ChecklistItem } from '@/lib/ai/types';
 
-interface ChecklistItem {
-  id: number;
-  categoria: string;
-  item: string;
-  status: 'completed' | 'pending' | 'attention' | 'not_applicable';
-  observacao: string;
+interface DueDiligenceChecklistTabProps {
+  data?: ChecklistItem[];
 }
 
-export function DueDiligenceChecklistTab() {
-  const typedChecklist = mockDueDiligenceChecklist as ChecklistItem[];
+export function DueDiligenceChecklistTab({ data }: DueDiligenceChecklistTabProps) {
+  if (!data) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-slate-500 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin" />
+        <p className="text-sm">Análise em processamento...</p>
+      </div>
+    );
+  }
+
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'completed':
-        return <CheckCircle2 className="w-5 h-5 text-green-600" />;
-      case 'pending':
-        return <Clock className="w-5 h-5 text-blue-600" />;
-      case 'attention':
-        return <AlertCircle className="w-5 h-5 text-yellow-600" />;
-      case 'not_applicable':
-        return <MinusCircle className="w-5 h-5 text-gray-400" />;
-      default:
-        return <XCircle className="w-5 h-5 text-red-600" />;
+      case 'completed': return <CheckCircle2 className="w-5 h-5 text-green-600" />;
+      case 'pending': return <Clock className="w-5 h-5 text-blue-600" />;
+      case 'attention': return <AlertCircle className="w-5 h-5 text-yellow-600" />;
+      case 'not_applicable': return <MinusCircle className="w-5 h-5 text-gray-400" />;
+      default: return <XCircle className="w-5 h-5 text-red-600" />;
     }
   };
 
   const getStatusLabel = (status: string) => {
     switch (status) {
-      case 'completed':
-        return <span className="text-green-600 text-sm font-medium">Concluído</span>;
-      case 'pending':
-        return <span className="text-blue-600 text-sm font-medium">Pendente</span>;
-      case 'attention':
-        return <span className="text-yellow-600 text-sm font-medium">Atenção</span>;
-      case 'not_applicable':
-        return <span className="text-gray-400 text-sm font-medium">N/A</span>;
-      default:
-        return <span className="text-red-600 text-sm font-medium">Pendente</span>;
+      case 'completed': return <span className="text-green-600 text-sm font-medium">Concluído</span>;
+      case 'pending': return <span className="text-blue-600 text-sm font-medium">Pendente</span>;
+      case 'attention': return <span className="text-yellow-600 text-sm font-medium">Atenção</span>;
+      case 'not_applicable': return <span className="text-gray-400 text-sm font-medium">N/A</span>;
+      default: return <span className="text-red-600 text-sm font-medium">Pendente</span>;
     }
   };
 
   const getStatusBg = (status: string) => {
     switch (status) {
-      case 'completed':
-        return 'bg-green-50 border-green-200';
-      case 'pending':
-        return 'bg-blue-50 border-blue-200';
-      case 'attention':
-        return 'bg-yellow-50 border-yellow-200';
-      case 'not_applicable':
-        return 'bg-gray-50 border-gray-200';
-      default:
-        return 'bg-white border-slate-200';
+      case 'completed': return 'bg-green-50 border-green-200';
+      case 'pending': return 'bg-blue-50 border-blue-200';
+      case 'attention': return 'bg-yellow-50 border-yellow-200';
+      case 'not_applicable': return 'bg-gray-50 border-gray-200';
+      default: return 'bg-white border-slate-200';
     }
   };
 
   // Group by category
-  const grouped = typedChecklist.reduce((acc, item) => {
-    if (!acc[item.categoria]) {
-      acc[item.categoria] = [];
-    }
+  const grouped = data.reduce((acc, item) => {
+    if (!acc[item.categoria]) acc[item.categoria] = [];
     acc[item.categoria].push(item);
     return acc;
   }, {} as Record<string, ChecklistItem[]>);
 
-  // Calculate statistics
-  const total = typedChecklist.length;
-  const completed = typedChecklist.filter(i => i.status === 'completed').length;
-  const pending = typedChecklist.filter(i => i.status === 'pending').length;
-  const attention = typedChecklist.filter(i => i.status === 'attention').length;
-  const notApplicable = typedChecklist.filter(i => i.status === 'not_applicable').length;
+  const total = data.length;
+  const completed = data.filter((i) => i.status === 'completed').length;
+  const pending = data.filter((i) => i.status === 'pending').length;
+  const attention = data.filter((i) => i.status === 'attention').length;
+  const notApplicable = data.filter((i) => i.status === 'not_applicable').length;
 
   return (
     <div className="space-y-6">
@@ -119,9 +105,9 @@ export function DueDiligenceChecklistTab() {
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
-              {items.map((item) => (
+              {items.map((item, index) => (
                 <div
-                  key={item.id}
+                  key={index}
                   className={`flex items-start gap-3 p-3 rounded-lg border ${getStatusBg(item.status)}`}
                 >
                   <div className="flex-shrink-0 mt-0.5">
@@ -142,6 +128,10 @@ export function DueDiligenceChecklistTab() {
           </CardContent>
         </Card>
       ))}
+
+      <p className="text-xs text-slate-400 text-center pt-2">
+        Minuta gerada por IA — revisar antes de uso oficial
+      </p>
     </div>
   );
 }

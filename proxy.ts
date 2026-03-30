@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -31,10 +31,10 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser();
 
   // Protect routes - redirect to login if not authenticated
-  const protectedRoutes = ['/', '/analysis'];
-  const isProtectedRoute = protectedRoutes.some(route => 
-    request.nextUrl.pathname.startsWith(route)
-  );
+  const pathname = request.nextUrl.pathname;
+  const publicRoutes = ['/login', '/signup', '/auth/callback'];
+  const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
+  const isProtectedRoute = !isPublicRoute;
 
   if (isProtectedRoute && !user) {
     const url = request.nextUrl.clone();
@@ -42,8 +42,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect to dashboard if already logged in and trying to access login
-  if (request.nextUrl.pathname === '/login' && user) {
+  // Redirect to dashboard if already logged in and trying to access public auth pages
+  if (isPublicRoute && user) {
     const url = request.nextUrl.clone();
     url.pathname = '/';
     return NextResponse.redirect(url);
@@ -56,6 +56,8 @@ export const config = {
   matcher: [
     '/',
     '/login',
+    '/signup',
+    '/auth/callback',
     '/analysis/:path*',
   ],
 };

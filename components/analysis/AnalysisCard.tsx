@@ -6,6 +6,7 @@ import { FileText, Calendar, User } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Analysis, getRiskColor, getRiskLabel, getRiskLevel } from '@/types';
+import Link from 'next/link';
 
 interface AnalysisCardProps {
   analysis: Analysis;
@@ -17,6 +18,7 @@ export function AnalysisCard({ analysis }: AnalysisCardProps) {
   const riskLabel = getRiskLabel(analysis.riskScore);
 
   return (
+    <Link href={`/analysis/${analysis.id}`}>
     <Card className="hover:shadow-md transition-shadow cursor-pointer">
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-4">
@@ -61,5 +63,6 @@ export function AnalysisCard({ analysis }: AnalysisCardProps) {
         </div>
       </CardContent>
     </Card>
+    </Link>
   );
 }
