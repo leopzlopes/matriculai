@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { Upload, File, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface FileUploadProps {
   onFileSelect?: (file: File) => void;
@@ -16,6 +17,7 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [isLimitReached, setIsLimitReached] = useState(false);
   const router = useRouter();
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -77,6 +79,12 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
       const res = await fetch('/api/upload', { method: 'POST', body: formData });
       const json = await res.json();
 
+      if (res.status === 402) {
+        setUploadError(json.error ?? 'Limite de análises atingido.');
+        setIsLimitReached(true);
+        return;
+      }
+
       if (!res.ok) {
         setUploadError(json.error ?? 'Erro ao enviar arquivo');
         return;
@@ -123,7 +131,17 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
           </div>
         </div>
         {uploadError && (
-          <p className="text-sm text-red-600 mt-3">{uploadError}</p>
+          <div className="mt-3">
+            <p className="text-sm text-red-600">{uploadError}</p>
+            {isLimitReached && (
+              <Link
+                href="/planos"
+                className="inline-block mt-2 text-sm font-semibold text-slate-900 underline underline-offset-2 hover:text-slate-600"
+              >
+                Ver planos e fazer upgrade →
+              </Link>
+            )}
+          </div>
         )}
       </div>
     );

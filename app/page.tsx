@@ -1,17 +1,26 @@
-'use client';
-
 import { Header } from '@/components/layout/Header';
 import { FileUpload } from '@/components/upload/FileUpload';
 import { RealTimeAnalysisList } from '@/components/analysis/RealTimeAnalysisList';
+import { PlanBadge } from '@/components/layout/PlanBadge';
 import { Card, CardContent } from '@/components/ui/card';
 import { History, Upload } from 'lucide-react';
+import { getUserPlanInfo } from '@/lib/actions/profile';
 
-export default function Home() {
+export default async function Home() {
+  const planInfo = await getUserPlanInfo();
+
   return (
     <div className="min-h-screen bg-slate-50">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8">
+        {/* Plan Badge */}
+        {planInfo && (
+          <div className="mb-6">
+            <PlanBadge planInfo={planInfo} />
+          </div>
+        )}
+
         {/* Upload Section */}
         <section className="mb-8">
           <div className="flex items-center gap-2 mb-4">

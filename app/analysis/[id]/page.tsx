@@ -7,9 +7,10 @@ import { EncumbrancesTab } from '@/components/analysis/tabs/EncumbrancesTab';
 import { AverbatationsTab } from '@/components/analysis/tabs/AverbatationsTab';
 import { DueDiligenceChecklistTab } from '@/components/analysis/tabs/DueDiligenceChecklistTab';
 import { AnalysisTrigger } from '@/components/analysis/AnalysisTrigger';
+import { ExportButtons } from '@/components/analysis/ExportButtons';
 import { getAnalysis } from '@/lib/actions/analyses';
+import { getUserPlanInfo } from '@/lib/actions/profile';
 import { getRiskColor, getRiskLabel } from '@/types';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type {
   GeneralSummaryData,
@@ -30,8 +31,6 @@ import {
   Scale,
   ClipboardList,
   CheckSquare,
-  Download,
-  Share2
 } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -44,7 +43,7 @@ interface AnalysisDetailPageProps {
 
 export default async function AnalysisDetailPage({ params }: AnalysisDetailPageProps) {
   const { id } = await params;
-  const result = await getAnalysis(id);
+  const [result, planInfo] = await Promise.all([getAnalysis(id), getUserPlanInfo()]);
 
   if (!result) {
     notFound();
@@ -95,16 +94,12 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
                 </Badge>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
-                <Share2 className="w-4 h-4 mr-2" />
-                Compartilhar
-              </Button>
-              <Button size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Exportar PDF
-              </Button>
-            </div>
+            <ExportButtons
+              analysisId={analysis.id}
+              registrationNumber={analysis.registration_number}
+              plan={planInfo?.plan ?? 'freemium'}
+              analysisStatus={analysis.status}
+            />
           </div>
         </div>
 

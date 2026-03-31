@@ -32,7 +32,7 @@ export async function proxy(request: NextRequest) {
 
   // Protect routes - redirect to login if not authenticated
   const pathname = request.nextUrl.pathname;
-  const publicRoutes = ['/login', '/signup', '/auth/callback'];
+  const publicRoutes = ['/login', '/signup', '/auth/callback', '/planos'];
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route));
   const isProtectedRoute = !isPublicRoute;
 
@@ -59,5 +59,6 @@ export const config = {
     '/signup',
     '/auth/callback',
     '/analysis/:path*',
+    '/planos',
   ],
 };

@@ -4,6 +4,7 @@ import { cookies } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 import { extractText } from 'unpdf';
 import { Database } from '@/lib/supabase/database.types';
+import { getPlanInfoForUser } from '@/lib/actions/profile';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -93,7 +94,16 @@ export async function POST(request: NextRequest) {
     console.error('PDF text extraction failed:', err);
   }
 
-  // 8. Insert into analyses
+  // 8. Check plan limit
+  const planInfo = await getPlanInfoForUser(user.id);
+  if (!planInfo.canUpload) {
+    return NextResponse.json(
+      { error: 'Limite de análises atingido. Faça upgrade para o plano Standard para continuar.', plan: planInfo.plan, used: planInfo.used, limit: planInfo.limit },
+      { status: 402 }
+    );
+  }
+
+  // 9. Insert into analyses
   const { data: analysis, error: dbError } = await supabaseAdmin
     .from('analyses')
     .insert({
