@@ -30,7 +30,7 @@ export async function GET(
 
   // 2. Plan check — export is Standard-only
   const planInfo = await getPlanInfoForUser(user.id);
-  if (planInfo.plan !== 'standard') {
+  if (planInfo.plan !== 'standard' && planInfo.plan !== 'admin') {
     return NextResponse.json(
       { error: 'Exportação disponível apenas no plano Standard' },
       { status: 403 }
