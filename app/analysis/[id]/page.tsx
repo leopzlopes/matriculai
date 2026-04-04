@@ -67,7 +67,7 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header isAdmin={planInfo?.plan === 'admin'} />
 
       <main className="container mx-auto px-4 py-8">
         {/* Back Link and Header */}

@@ -11,7 +11,7 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header isAdmin={planInfo?.plan === 'admin'} />
 
       <main className="container mx-auto px-4 py-8">
         {/* Plan Badge */}

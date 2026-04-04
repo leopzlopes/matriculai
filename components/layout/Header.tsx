@@ -1,11 +1,15 @@
 'use client';
 
-import { Building2, LogOut, User, LayoutDashboard, ClipboardList } from 'lucide-react';
+import { Building2, LogOut, User, LayoutDashboard, ClipboardList, ShieldCheck } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
-export function Header() {
+interface HeaderProps {
+  isAdmin?: boolean;
+}
+
+export function Header({ isAdmin }: HeaderProps) {
   const { user, signOut } = useAuth();
   const router = useRouter();
 
@@ -42,6 +46,15 @@ export function Header() {
             <ClipboardList className="w-4 h-4" />
             Análises
           </Link>
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <ShieldCheck className="w-4 h-4" />
+              Admin
+            </Link>
+          )}
 
           {user && (
             <div className="flex items-center gap-2 ml-4 pl-4 border-l border-white/20">
