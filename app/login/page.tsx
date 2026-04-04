@@ -40,14 +40,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-slate-900 rounded-lg flex items-center justify-center">
+          <div className="w-12 h-12 bg-[#0C447C] rounded-lg flex items-center justify-center">
             <Building2 className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">MatriculAI</h1>
+            <h1 className="text-2xl font-bold text-slate-900 font-serif">MatriculAI</h1>
             <p className="text-sm text-slate-500">Due Diligence Imobiliária</p>
           </div>
         </div>

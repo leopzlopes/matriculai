@@ -34,7 +34,7 @@ export default function PlanosContent() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <header className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-900">
@@ -69,7 +69,7 @@ export default function PlanosContent() {
         )}
 
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-slate-900 mb-3">Planos MatriculAI</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-3 font-serif">Planos MatriculAI</h1>
           <p className="text-slate-500 text-lg">
             Análise de matrículas com inteligência artificial — rápida, precisa e segura.
           </p>
@@ -104,9 +104,9 @@ export default function PlanosContent() {
           </Card>
 
           {/* Standard */}
-          <Card className="border-2 border-slate-900 relative">
+          <Card className="border-2 border-[#0C447C] relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="bg-slate-900 text-white text-xs font-semibold px-3 py-1 rounded-full">
+              <span className="bg-[#0C447C] text-white text-xs font-semibold px-3 py-1 rounded-full">
                 Recomendado
               </span>
             </div>

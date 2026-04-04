@@ -66,7 +66,7 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
   const checklistData: ChecklistItem[] | undefined = penhorabilidadeData?.checklist;
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen">
       <Header />
 
       <main className="container mx-auto px-4 py-8">
@@ -82,7 +82,7 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-1">
+              <h1 className="text-2xl font-bold text-slate-900 mb-1 font-serif">
                 {analysis.property_name}
               </h1>
               <div className="flex items-center gap-3">

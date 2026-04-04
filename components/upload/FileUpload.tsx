@@ -156,7 +156,7 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
         border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
         transition-all duration-200
         ${isDragging
-          ? 'border-slate-900 bg-slate-100'
+          ? 'border-[#0C447C] bg-slate-100'
           : 'border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50'
         }
       `}
@@ -170,7 +170,7 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
       />
       <label htmlFor="file-upload" className="cursor-pointer">
         <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Upload className={`w-8 h-8 ${isDragging ? 'text-slate-900' : 'text-slate-500'}`} />
+          <Upload className={`w-8 h-8 ${isDragging ? 'text-[#0C447C]' : 'text-slate-500'}`} />
         </div>
         <h3 className="text-lg font-semibold text-slate-900 mb-2">
           Arraste o PDF da matrícula aqui

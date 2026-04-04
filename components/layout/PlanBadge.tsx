@@ -31,7 +31,7 @@ export function PlanBadge({ planInfo }: PlanBadgeProps) {
         </div>
         <Link
           href="/planos"
-          className="flex items-center gap-1 px-3 py-1.5 bg-slate-900 text-white rounded-md text-xs font-semibold hover:bg-slate-700 transition-colors whitespace-nowrap"
+          className="flex items-center gap-1 px-3 py-1.5 bg-[#0C447C] text-white rounded-md text-xs font-semibold hover:bg-[#185FA5] transition-colors whitespace-nowrap"
         >
           <Zap className="w-3 h-3" />
           Fazer upgrade
@@ -56,7 +56,7 @@ export function PlanBadge({ planInfo }: PlanBadgeProps) {
       </div>
       <div className="h-1.5 bg-slate-200 rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all ${percentage >= 66 ? 'bg-amber-500' : 'bg-slate-900'}`}
+          className={`h-full rounded-full transition-all ${percentage >= 66 ? 'bg-amber-500' : 'bg-[#0C447C]'}`}
           style={{ width: `${percentage}%` }}
         />
       </div>
