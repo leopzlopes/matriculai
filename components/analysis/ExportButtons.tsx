@@ -7,7 +7,7 @@ import { Download, FileText, Loader2, Lock } from 'lucide-react';
 interface ExportButtonsProps {
   analysisId: string;
   registrationNumber: string;
-  plan: 'freemium' | 'standard';
+  plan: 'freemium' | 'standard' | 'admin';
   analysisStatus?: string | null;
 }
 
@@ -21,7 +21,7 @@ export function ExportButtons({
   const [loadingDocx, setLoadingDocx] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isStandard = plan === 'standard';
+  const isStandard = plan === 'standard' || plan === 'admin';
   const isReady = analysisStatus === 'completed';
   const disabled = !isStandard || !isReady;
 
