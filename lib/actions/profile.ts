@@ -8,7 +8,7 @@ const FREEMIUM_LIMIT = 3;
 const STANDARD_LIMIT = 30;
 
 export type PlanInfo = {
-  plan: 'freemium' | 'standard';
+  plan: 'freemium' | 'standard' | 'admin';
   used: number;
   limit: number;
   canUpload: boolean;
@@ -40,7 +40,12 @@ export async function getPlanInfoForUser(userId: string): Promise<PlanInfo> {
       .eq('user_id', userId),
   ]);
 
-  const plan = (profileResult.data?.plan ?? 'freemium') as 'freemium' | 'standard';
+  const plan = (profileResult.data?.plan ?? 'freemium') as 'freemium' | 'standard' | 'admin';
+
+  if (plan === 'admin') {
+    const used = countResult.count ?? 0;
+    return { plan, used, limit: Infinity, canUpload: true };
+  }
 
   if (plan === 'standard') {
     // Count only this month's analyses
