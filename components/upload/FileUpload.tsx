@@ -1,8 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { Upload, File, X, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Upload, File, X, Loader2, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -33,7 +32,6 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-
     const files = e.dataTransfer.files;
     if (files.length > 0) {
       const file = files[0];
@@ -100,43 +98,54 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
 
   if (selectedFile) {
     return (
-      <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 bg-slate-50">
-        <div className="flex items-center justify-between">
+      <div className="rounded-xl border-2 border-dashed border-slate-200 p-6 bg-white">
+        <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
-              <File className="w-6 h-6 text-red-600" />
+            <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0">
+              <File className="w-5 h-5 text-red-500" />
             </div>
             <div>
-              <p className="font-medium text-slate-900">{selectedFile.name}</p>
-              <p className="text-sm text-slate-500">
-                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+              <p className="font-semibold text-[#111219] text-sm">{selectedFile.name}</p>
+              <p className="text-xs text-slate-400 mt-0.5">
+                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB · PDF
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={clearFile} disabled={isUploading}>
-              <X className="w-4 h-4 mr-2" />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={clearFile}
+              disabled={isUploading}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors disabled:opacity-50"
+            >
+              <X className="w-3.5 h-3.5" />
               Remover
-            </Button>
-            <Button onClick={handleUpload} disabled={isUploading}>
+            </button>
+            <button
+              onClick={handleUpload}
+              disabled={isUploading}
+              className="flex items-center gap-2 px-5 py-2 bg-[#0C447C] text-white rounded-full text-sm font-semibold hover:bg-[#185FA5] transition-colors disabled:opacity-50"
+            >
               {isUploading ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   Enviando...
                 </>
               ) : (
-                'Iniciar Análise'
+                <>
+                  Iniciar Análise
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
-            </Button>
+            </button>
           </div>
         </div>
         {uploadError && (
-          <div className="mt-3">
+          <div className="mt-4 p-3 bg-red-50 rounded-lg">
             <p className="text-sm text-red-600">{uploadError}</p>
             {isLimitReached && (
               <Link
                 href="/planos"
-                className="inline-block mt-2 text-sm font-semibold text-slate-900 underline underline-offset-2 hover:text-slate-600"
+                className="inline-flex items-center gap-1 mt-2 text-sm font-semibold text-[#0C447C] hover:underline"
               >
                 Ver planos e fazer upgrade →
               </Link>
@@ -153,11 +162,10 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
       className={`
-        border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
-        transition-all duration-200
+        relative rounded-xl border-2 border-dashed p-12 text-center cursor-pointer transition-all duration-200
         ${isDragging
-          ? 'border-[#0C447C] bg-slate-100'
-          : 'border-slate-300 bg-white hover:border-slate-400 hover:bg-slate-50'
+          ? 'border-[#0C447C] bg-blue-50/50'
+          : 'border-slate-200 bg-white hover:border-[#0C447C]/40 hover:bg-slate-50/50'
         }
       `}
     >
@@ -169,20 +177,24 @@ export function FileUpload({ onFileSelect }: FileUploadProps) {
         id="file-upload"
       />
       <label htmlFor="file-upload" className="cursor-pointer">
-        <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <Upload className={`w-8 h-8 ${isDragging ? 'text-[#0C447C]' : 'text-slate-500'}`} />
+        <div className={`
+          w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-5 transition-colors
+          ${isDragging ? 'bg-[#0C447C]' : 'bg-[#0C447C]/8'}
+        `}>
+          <Upload className={`w-7 h-7 ${isDragging ? 'text-white' : 'text-[#0C447C]'}`} />
         </div>
-        <h3 className="text-lg font-semibold text-slate-900 mb-2">
+        <h3 className="text-lg font-semibold text-[#111219] mb-1.5">
           Arraste o PDF da matrícula aqui
         </h3>
-        <p className="text-sm text-slate-500 mb-4">
+        <p className="text-sm text-slate-400 mb-5">
           ou clique para selecionar o arquivo
         </p>
-        <Button variant="outline" type="button">
+        <span className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0C447C] text-white rounded-full text-sm font-semibold hover:bg-[#185FA5] transition-colors">
+          <Upload className="w-4 h-4" />
           Selecionar Arquivo
-        </Button>
+        </span>
         <p className="text-xs text-slate-400 mt-4">
-          Apenas arquivos PDF são aceitos • Máximo 50 MB
+          Apenas PDF · Máximo 50 MB
         </p>
       </label>
     </div>

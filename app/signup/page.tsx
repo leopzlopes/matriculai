@@ -2,10 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { Building2, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -21,18 +17,14 @@ export function SignupPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (user) {
-      router.push('/');
-    }
+    if (user) router.push('/');
   }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
-
     const result = await signUp(email, password, name);
-
     if (result.error) {
       setError(result.error.message);
       setIsLoading(false);
@@ -43,91 +35,109 @@ export function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm">
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-[#0C447C] rounded-lg flex items-center justify-center">
-            <Building2 className="w-7 h-7 text-white" />
+          <div className="w-11 h-11 bg-[#0C447C] rounded-xl flex items-center justify-center">
+            <Building2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">MatriculAI</h1>
-            <p className="text-sm text-slate-500">Due Diligence Imobiliária</p>
+            <h1 className="text-xl font-bold text-[#111219]">MatriculAI</h1>
+            <p className="text-xs text-slate-400">Due Diligence Imobiliária</p>
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">Criar Conta</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {success ? (
-              <div className="text-center space-y-4">
-                <p className="text-sm text-slate-700">
-                  Conta criada! Verifique seu e-mail para confirmar o cadastro.
-                </p>
-                <Link href="/login" className="text-sm text-slate-600 hover:text-slate-900 underline">
-                  Ir para o login
-                </Link>
+        <div className="bg-white rounded-2xl border border-black/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-8">
+          <h2 className="text-xl font-bold text-[#111219] mb-1">Criar Conta</h2>
+          <p className="text-sm text-slate-400 mb-6">Comece gratuitamente</p>
+
+          {success ? (
+            <div className="text-center space-y-4 py-4">
+              <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto">
+                <svg className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Nome completo</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Seu nome"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">Senha</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                  />
-                </div>
-
-                {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-800">
-                    {error}
-                  </div>
-                )}
-
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  Criar Conta
-                </Button>
-              </form>
-            )}
-
-            <div className="mt-4 text-center">
-              <Link href="/login" className="text-sm text-slate-600 hover:text-slate-900">
-                Já tem uma conta? Entre
+              <p className="text-sm text-slate-700 font-medium">Conta criada com sucesso!</p>
+              <p className="text-sm text-slate-400">Verifique seu e-mail para confirmar o cadastro.</p>
+              <Link href="/login" className="inline-block text-sm text-[#0C447C] font-medium hover:underline">
+                Ir para o login →
               </Link>
             </div>
-          </CardContent>
-        </Card>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-[#111219] mb-1.5">
+                  Nome completo
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  placeholder="Seu nome"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl border border-black/[0.12] bg-white text-sm text-[#111219] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0C447C]/30 focus:border-[#0C447C] transition-colors"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="email" className="block text-sm font-medium text-[#111219] mb-1.5">
+                  Email
+                </label>
+                <input
+                  id="email"
+                  type="email"
+                  placeholder="seu@email.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-2.5 rounded-xl border border-black/[0.12] bg-white text-sm text-[#111219] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0C447C]/30 focus:border-[#0C447C] transition-colors"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-sm font-medium text-[#111219] mb-1.5">
+                  Senha
+                </label>
+                <input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  minLength={6}
+                  className="w-full px-4 py-2.5 rounded-xl border border-black/[0.12] bg-white text-sm text-[#111219] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0C447C]/30 focus:border-[#0C447C] transition-colors"
+                />
+              </div>
+
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                  {error}
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#0C447C] text-white rounded-full font-semibold text-sm hover:bg-[#185FA5] transition-colors disabled:opacity-50"
+              >
+                {isLoading && <Loader2 className="w-4 h-4 animate-spin" />}
+                Criar Conta
+              </button>
+            </form>
+          )}
+
+          {!success && (
+            <p className="mt-5 text-center text-sm text-slate-400">
+              Já tem uma conta?{' '}
+              <Link href="/login" className="text-[#0C447C] font-medium hover:underline">
+                Entrar
+              </Link>
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );
