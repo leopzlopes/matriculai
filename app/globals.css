@@ -48,8 +48,8 @@
 }
 
 :root {
-  --background: #f7f8fa;
-  --foreground: oklch(0.145 0 0);
+  --background: #fafafa;
+  --foreground: #111219;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);

@@ -31,7 +31,7 @@ export function PlanBadge({ planInfo }: PlanBadgeProps) {
         </div>
         <Link
           href="/planos"
-          className="flex items-center gap-1 px-3 py-1.5 bg-[#0C447C] text-white rounded-md text-xs font-semibold hover:bg-[#185FA5] transition-colors whitespace-nowrap"
+          className="flex items-center gap-1 px-3 py-1.5 bg-[#0C447C] text-white rounded-full text-xs font-semibold hover:bg-[#185FA5] transition-colors whitespace-nowrap"
         >
           <Zap className="w-3 h-3" />
           Fazer upgrade

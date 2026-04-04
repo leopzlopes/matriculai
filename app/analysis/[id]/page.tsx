@@ -82,7 +82,7 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
 
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-1 font-serif">
+              <h1 className="text-2xl font-bold text-slate-900 mb-1">
                 {analysis.property_name}
               </h1>
               <div className="flex items-center gap-3">

@@ -69,7 +69,7 @@ export default function PlanosContent() {
         )}
 
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-slate-900 mb-3 font-serif">Planos MatriculAI</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-3">Planos MatriculAI</h1>
           <p className="text-slate-500 text-lg">
             Análise de matrículas com inteligência artificial — rápida, precisa e segura.
           </p>

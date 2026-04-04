@@ -25,7 +25,7 @@ export default async function Home() {
         <section className="mb-8">
           <div className="flex items-center gap-2 mb-4">
             <Upload className="w-5 h-5 text-slate-700" />
-            <h2 className="text-xl font-semibold text-slate-900 font-serif">
+            <h2 className="text-xl font-semibold text-slate-900">
               Nova Análise
             </h2>
           </div>
@@ -40,7 +40,7 @@ export default async function Home() {
         <section>
           <div className="flex items-center gap-2 mb-4">
             <History className="w-5 h-5 text-slate-700" />
-            <h2 className="text-xl font-semibold text-slate-900 font-serif">
+            <h2 className="text-xl font-semibold text-slate-900">
               Análises Realizadas
             </h2>
           </div>
