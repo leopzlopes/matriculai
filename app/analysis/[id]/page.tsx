@@ -1,11 +1,5 @@
 import { Header } from '@/components/layout/Header';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GeneralSummaryTab } from '@/components/analysis/tabs/GeneralSummaryTab';
-import { PropertyDataTab } from '@/components/analysis/tabs/PropertyDataTab';
-import { OwnersTab } from '@/components/analysis/tabs/OwnersTab';
-import { EncumbrancesTab } from '@/components/analysis/tabs/EncumbrancesTab';
-import { AverbatationsTab } from '@/components/analysis/tabs/AverbatationsTab';
-import { DueDiligenceChecklistTab } from '@/components/analysis/tabs/DueDiligenceChecklistTab';
+import { AnalysisTabsSection } from '@/components/analysis/AnalysisTabsSection';
 import { AnalysisTrigger } from '@/components/analysis/AnalysisTrigger';
 import { ExportButtons } from '@/components/analysis/ExportButtons';
 import { getAnalysis } from '@/lib/actions/analyses';
@@ -21,17 +15,8 @@ import type {
   ChecklistItem,
   Modulo1Result,
   Modulo2Result,
-  Modulo3Result,
 } from '@/lib/ai/types';
-import {
-  ArrowLeft,
-  FileText,
-  Building2,
-  Users,
-  Scale,
-  ClipboardList,
-  CheckSquare,
-} from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -64,6 +49,8 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
   const encumbrancesData: Encumbrance[] | undefined = registralData?.encumbrances;
   const averbatationsData: Averbation[] | undefined = registralData?.averbatations;
   const checklistData: ChecklistItem[] | undefined = penhorabilidadeData?.checklist;
+
+  const contexto = `${analysis.property_name} — Matrícula ${analysis.registration_number}`;
 
   return (
     <div className="min-h-screen">
@@ -107,58 +94,15 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
         <AnalysisTrigger analysisId={analysis.id} status={analysis.status ?? 'pending'} />
 
         {/* Tabs */}
-        <Tabs defaultValue="summary" className="w-full">
-          <TabsList className="w-full justify-start flex-wrap h-auto gap-2 mb-6">
-            <TabsTrigger value="summary" className="flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Resumo Geral
-            </TabsTrigger>
-            <TabsTrigger value="property" className="flex items-center gap-2">
-              <Building2 className="w-4 h-4" />
-              Dados do Imóvel
-            </TabsTrigger>
-            <TabsTrigger value="owners" className="flex items-center gap-2">
-              <Users className="w-4 h-4" />
-              Proprietários
-            </TabsTrigger>
-            <TabsTrigger value="encumbrances" className="flex items-center gap-2">
-              <Scale className="w-4 h-4" />
-              Ônus e Gravames
-            </TabsTrigger>
-            <TabsTrigger value="averbatations" className="flex items-center gap-2">
-              <ClipboardList className="w-4 h-4" />
-              Averbações
-            </TabsTrigger>
-            <TabsTrigger value="checklist" className="flex items-center gap-2">
-              <CheckSquare className="w-4 h-4" />
-              Checklist DD
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="summary" className="mt-0">
-            <GeneralSummaryTab data={generalSummaryData} />
-          </TabsContent>
-
-          <TabsContent value="property" className="mt-0">
-            <PropertyDataTab data={propertyData} />
-          </TabsContent>
-
-          <TabsContent value="owners" className="mt-0">
-            <OwnersTab data={ownersData} />
-          </TabsContent>
-
-          <TabsContent value="encumbrances" className="mt-0">
-            <EncumbrancesTab data={encumbrancesData} />
-          </TabsContent>
-
-          <TabsContent value="averbatations" className="mt-0">
-            <AverbatationsTab data={averbatationsData} />
-          </TabsContent>
-
-          <TabsContent value="checklist" className="mt-0">
-            <DueDiligenceChecklistTab data={checklistData} />
-          </TabsContent>
-        </Tabs>
+        <AnalysisTabsSection
+          generalSummaryData={generalSummaryData}
+          propertyData={propertyData}
+          ownersData={ownersData}
+          encumbrancesData={encumbrancesData}
+          averbatationsData={averbatationsData}
+          checklistData={checklistData}
+          contexto={contexto}
+        />
       </main>
     </div>
   );

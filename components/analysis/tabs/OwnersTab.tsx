@@ -3,7 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, Calendar, FileText, Percent, Loader2 } from 'lucide-react';
 import type { Owner } from '@/lib/ai/types';
-import { PesquisarProcessosButton } from '@/components/analysis/escavador/PesquisarProcessosButton';
 
 interface OwnersTabProps {
   data?: Owner[];
@@ -48,7 +47,6 @@ export function OwnersTab({ data }: OwnersTabProps) {
                   <div>
                     <label className="text-sm text-slate-500">Nome</label>
                     <p className="font-semibold text-slate-900">{owner.nome}</p>
-                    <PesquisarProcessosButton nomeProprietario={owner.nome} />
                   </div>
                   <div>
                     <label className="text-sm text-slate-500">Tipo de Titularidade</label>

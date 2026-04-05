@@ -31,4 +31,7 @@ export interface ProcessoEnvolvido {
 export interface ParecerResult {
   parecer: string;
   nivel_risco: 'alto' | 'medio' | 'baixo';
+  resumo_riscos?: string;
+  impacto_negociabilidade?: string;
+  recomendacoes?: string[];
 }

@@ -3,28 +3,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scale, AlertTriangle, AlertCircle, Loader2 } from 'lucide-react';
 import type { Encumbrance } from '@/lib/ai/types';
-import { ConsultarProcessoButton } from '@/components/analysis/escavador/ConsultarProcessoButton';
-
-const CNJ_FORMATTED = /\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/;
-const CNJ_RAW = /\d[\d\s]{18}\d/; // 20 dígitos com possíveis espaços intercalados
-
-function formatCNJ(digits: string): string {
-  const d = digits.replace(/\D/g, '');
-  return `${d.slice(0, 7)}-${d.slice(7, 9)}.${d.slice(9, 13)}.${d.slice(13, 14)}.${d.slice(14, 16)}.${d.slice(16, 20)}`;
-}
-
-function extractCNJ(text: string): string | null {
-  const formatted = text.match(CNJ_FORMATTED);
-  if (formatted) return formatted[0];
-
-  const raw = text.match(CNJ_RAW);
-  if (raw) {
-    const digits = raw[0].replace(/\D/g, '');
-    if (digits.length === 20) return formatCNJ(digits);
-  }
-
-  return null;
-}
 
 interface EncumbrancesTabProps {
   data?: Encumbrance[];
@@ -89,9 +67,7 @@ export function EncumbrancesTab({ data }: EncumbrancesTabProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {data.map((encumbrance, index) => {
-              const numeroCnj = extractCNJ(encumbrance.descricao) ?? extractCNJ(encumbrance.numeroRegistro);
-              return (
+            {data.map((encumbrance, index) => (
               <div
                 key={index}
                 className={`border rounded-lg p-4 ${getGravameColor(encumbrance.gravame)}`}
@@ -118,14 +94,10 @@ export function EncumbrancesTab({ data }: EncumbrancesTabProps) {
                         <span className="font-medium font-mono">{encumbrance.numeroRegistro}</span>
                       </div>
                     </div>
-                    {numeroCnj && (
-                      <ConsultarProcessoButton numeroCnj={numeroCnj} contexto={encumbrance.descricao} />
-                    )}
                   </div>
                 </div>
               </div>
-              );
-            })}
+            ))}
           </div>
         </CardContent>
       </Card>
