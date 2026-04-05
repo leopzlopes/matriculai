@@ -1,4 +1,3 @@
-import { Header } from '@/components/layout/Header';
 import { AnalysisTabsSection } from '@/components/analysis/AnalysisTabsSection';
 import { AnalysisTrigger } from '@/components/analysis/AnalysisTrigger';
 import { ExportButtons } from '@/components/analysis/ExportButtons';
@@ -6,6 +5,7 @@ import { getAnalysis } from '@/lib/actions/analyses';
 import { getUserPlanInfo } from '@/lib/actions/profile';
 import { getRiskColor, getRiskLabel } from '@/types';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import type {
   GeneralSummaryData,
   PropertyData,
@@ -16,7 +16,7 @@ import type {
   Modulo1Result,
   Modulo2Result,
 } from '@/lib/ai/types';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, FileText } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -53,34 +53,38 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
   const contexto = `${analysis.property_name} — Matrícula ${analysis.registration_number}`;
 
   return (
-    <div className="min-h-screen">
-      <Header isAdmin={planInfo?.plan === 'admin'} />
+    <div className="container mx-auto px-4 py-8">
+      {/* Back Link and Header */}
+      <div className="mb-6">
+        <Link
+          href="/"
+          className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900 mb-4"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Voltar para Dashboard
+        </Link>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Back Link and Header */}
-        <div className="mb-6">
-          <Link
-            href="/"
-            className="inline-flex items-center text-sm text-slate-600 hover:text-slate-900 mb-4"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1" />
-            Voltar para Dashboard
-          </Link>
-
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-slate-900 mb-1">
-                {analysis.property_name}
-              </h1>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-slate-500">
-                  Matrícula {analysis.registration_number}
-                </span>
-                <Badge className={`${riskColor} text-white`}>
-                  Score: {riskScore}/100 - {riskLabel}
-                </Badge>
-              </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 mb-1">
+              {analysis.property_name}
+            </h1>
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-slate-500">
+                Matrícula {analysis.registration_number}
+              </span>
+              <Badge className={`${riskColor} text-white`}>
+                Score: {riskScore}/100 - {riskLabel}
+              </Badge>
             </div>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Link href={`/documentos/escrituras?analysisId=${analysis.id}`}>
+              <Button variant="outline" size="sm" className="flex items-center gap-1.5">
+                <FileText className="w-4 h-4" />
+                Gerar Minuta
+              </Button>
+            </Link>
             <ExportButtons
               analysisId={analysis.id}
               registrationNumber={analysis.registration_number}
@@ -89,21 +93,21 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
             />
           </div>
         </div>
+      </div>
 
-        {/* Processing Banner */}
-        <AnalysisTrigger analysisId={analysis.id} status={analysis.status ?? 'pending'} />
+      {/* Processing Banner */}
+      <AnalysisTrigger analysisId={analysis.id} status={analysis.status ?? 'pending'} />
 
-        {/* Tabs */}
-        <AnalysisTabsSection
-          generalSummaryData={generalSummaryData}
-          propertyData={propertyData}
-          ownersData={ownersData}
-          encumbrancesData={encumbrancesData}
-          averbatationsData={averbatationsData}
-          checklistData={checklistData}
-          contexto={contexto}
-        />
-      </main>
+      {/* Tabs */}
+      <AnalysisTabsSection
+        generalSummaryData={generalSummaryData}
+        propertyData={propertyData}
+        ownersData={ownersData}
+        encumbrancesData={encumbrancesData}
+        averbatationsData={averbatationsData}
+        checklistData={checklistData}
+        contexto={contexto}
+      />
     </div>
   );
 }
