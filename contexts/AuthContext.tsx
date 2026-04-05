@@ -13,7 +13,7 @@ interface AuthContextType {
     email: string,
     password: string,
     name: string,
-    extra?: { tipoUsuario?: string; oabNumero?: string; oabUf?: string }
+    extra?: { tipoUsuario?: string; oabNumero?: string; oabUf?: string; creciNumero?: string; creciUf?: string }
   ) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     email: string,
     password: string,
     name: string,
-    extra?: { tipoUsuario?: string; oabNumero?: string; oabUf?: string }
+    extra?: { tipoUsuario?: string; oabNumero?: string; oabUf?: string; creciNumero?: string; creciUf?: string }
   ) => {
     const { error } = await supabase.auth.signUp({
       email,
@@ -62,6 +62,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           tipo_usuario: extra?.tipoUsuario ?? null,
           oab_numero: extra?.oabNumero ?? null,
           oab_uf: extra?.oabUf ?? null,
+          creci_numero: extra?.creciNumero ?? null,
+          creci_uf: extra?.creciUf ?? null,
         },
       },
     });

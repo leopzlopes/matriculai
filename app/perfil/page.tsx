@@ -38,7 +38,7 @@ export default async function PerfilPage() {
             </div>
           </div>
 
-          <ProfileForm initialData={profileData ?? { tipo_usuario: null, oab_numero: null, oab_uf: null }} />
+          <ProfileForm initialData={profileData ?? { tipo_usuario: null, oab_numero: null, oab_uf: null, creci_numero: null, creci_uf: null }} />
         </div>
       </main>
     </div>

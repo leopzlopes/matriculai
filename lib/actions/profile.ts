@@ -71,6 +71,8 @@ export type ProfileData = {
   tipo_usuario: string | null;
   oab_numero: string | null;
   oab_uf: string | null;
+  creci_numero: string | null;
+  creci_uf: string | null;
 };
 
 export async function getProfileData(): Promise<ProfileData | null> {
@@ -84,7 +86,7 @@ export async function getProfileData(): Promise<ProfileData | null> {
   );
   const { data } = await admin
     .from('profiles')
-    .select('tipo_usuario, oab_numero, oab_uf')
+    .select('tipo_usuario, oab_numero, oab_uf, creci_numero, creci_uf')
     .eq('id', user.id)
     .single();
 
@@ -94,6 +96,8 @@ export async function getProfileData(): Promise<ProfileData | null> {
     tipo_usuario: d?.tipo_usuario ?? null,
     oab_numero: d?.oab_numero ?? null,
     oab_uf: d?.oab_uf ?? null,
+    creci_numero: d?.creci_numero ?? null,
+    creci_uf: d?.creci_uf ?? null,
   };
 }
 
@@ -101,6 +105,8 @@ export async function updateProfile(data: {
   tipo_usuario?: string;
   oab_numero?: string;
   oab_uf?: string;
+  creci_numero?: string;
+  creci_uf?: string;
 }): Promise<{ error?: string }> {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -119,6 +125,8 @@ export async function updateProfile(data: {
       oab_numero: data.oab_numero ?? null,
       oab_uf: data.oab_uf ?? null,
       is_advogado: data.tipo_usuario === 'advogado',
+      creci_numero: data.creci_numero ?? null,
+      creci_uf: data.creci_uf ?? null,
     })
     .eq('id', user.id);
 

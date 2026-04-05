@@ -63,6 +63,11 @@ export default async function AdminUsuarios() {
                           OAB {user.oabNumero}{user.oabUf ? `/${user.oabUf}` : ''}
                         </p>
                       )}
+                      {user.tipoUsuario === 'corretor' && user.creciNumero && (
+                        <p className="text-xs text-slate-400 mt-0.5">
+                          CRECI {user.creciNumero}{user.creciUf ? `/${user.creciUf}` : ''}
+                        </p>
+                      )}
                     </div>
                   ) : (
                     <span className="text-xs text-slate-300">—</span>

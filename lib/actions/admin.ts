@@ -21,6 +21,8 @@ export type AdminUser = {
   tipoUsuario: string | null;
   oabNumero: string | null;
   oabUf: string | null;
+  creciNumero: string | null;
+  creciUf: string | null;
 };
 
 export type AdminStats = {
@@ -108,7 +110,7 @@ export async function getAllUsers(): Promise<AdminUser[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { data: profiles } = await (admin as any)
     .from('profiles')
-    .select('id, plan, created_at, tipo_usuario, oab_numero, oab_uf');
+    .select('id, plan, created_at, tipo_usuario, oab_numero, oab_uf, creci_numero, creci_uf');
   const { data: analysisCounts } = await admin
     .from('analyses')
     .select('user_id');
@@ -132,6 +134,8 @@ export async function getAllUsers(): Promise<AdminUser[]> {
       tipoUsuario: p?.tipo_usuario ?? null,
       oabNumero: p?.oab_numero ?? null,
       oabUf: p?.oab_uf ?? null,
+      creciNumero: p?.creci_numero ?? null,
+      creciUf: p?.creci_uf ?? null,
     };
   }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }

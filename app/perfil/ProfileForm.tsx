@@ -9,6 +9,8 @@ interface ProfileFormProps {
     tipo_usuario: string | null;
     oab_numero: string | null;
     oab_uf: string | null;
+    creci_numero: string | null;
+    creci_uf: string | null;
   };
 }
 
@@ -23,6 +25,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   const [tipoUsuario, setTipoUsuario] = useState(initialData.tipo_usuario ?? '');
   const [oabNumero, setOabNumero] = useState(initialData.oab_numero ?? '');
   const [oabUf, setOabUf] = useState(initialData.oab_uf ?? '');
+  const [creciNumero, setCreciNumero] = useState(initialData.creci_numero ?? '');
+  const [creciUf, setCreciUf] = useState(initialData.creci_uf ?? '');
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +41,8 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
       tipo_usuario: tipoUsuario || undefined,
       oab_numero: oabNumero || undefined,
       oab_uf: oabUf || undefined,
+      creci_numero: creciNumero || undefined,
+      creci_uf: creciUf || undefined,
     });
 
     if (result.error) {
@@ -91,6 +97,38 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               placeholder="Ex: SP"
               value={oabUf}
               onChange={(e) => setOabUf(e.target.value.toUpperCase())}
+              maxLength={2}
+              className="w-full px-4 py-2.5 rounded-xl border border-black/[0.12] bg-white text-sm text-[#111219] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0C447C]/30 focus:border-[#0C447C] transition-colors"
+            />
+          </div>
+        </div>
+      )}
+
+      {tipoUsuario === 'corretor' && (
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <label htmlFor="creci_numero" className="block text-sm font-medium text-[#111219] mb-1.5">
+              Número CRECI
+            </label>
+            <input
+              id="creci_numero"
+              type="text"
+              placeholder="Ex: 123456"
+              value={creciNumero}
+              onChange={(e) => setCreciNumero(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border border-black/[0.12] bg-white text-sm text-[#111219] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0C447C]/30 focus:border-[#0C447C] transition-colors"
+            />
+          </div>
+          <div>
+            <label htmlFor="creci_uf" className="block text-sm font-medium text-[#111219] mb-1.5">
+              UF do CRECI
+            </label>
+            <input
+              id="creci_uf"
+              type="text"
+              placeholder="Ex: SP"
+              value={creciUf}
+              onChange={(e) => setCreciUf(e.target.value.toUpperCase())}
               maxLength={2}
               className="w-full px-4 py-2.5 rounded-xl border border-black/[0.12] bg-white text-sm text-[#111219] placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0C447C]/30 focus:border-[#0C447C] transition-colors"
             />
