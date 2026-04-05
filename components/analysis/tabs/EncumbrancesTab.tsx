@@ -3,6 +3,14 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Scale, AlertTriangle, AlertCircle, Loader2 } from 'lucide-react';
 import type { Encumbrance } from '@/lib/ai/types';
+import { ConsultarProcessoButton } from '@/components/analysis/escavador/ConsultarProcessoButton';
+
+const CNJ_REGEX = /\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}/;
+
+function extractCNJ(text: string): string | null {
+  const match = text.match(CNJ_REGEX);
+  return match ? match[0] : null;
+}
 
 interface EncumbrancesTabProps {
   data?: Encumbrance[];
@@ -67,7 +75,9 @@ export function EncumbrancesTab({ data }: EncumbrancesTabProps) {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {data.map((encumbrance, index) => (
+            {data.map((encumbrance, index) => {
+              const numeroCnj = extractCNJ(encumbrance.descricao) ?? extractCNJ(encumbrance.numeroRegistro);
+              return (
               <div
                 key={index}
                 className={`border rounded-lg p-4 ${getGravameColor(encumbrance.gravame)}`}
@@ -94,10 +104,14 @@ export function EncumbrancesTab({ data }: EncumbrancesTabProps) {
                         <span className="font-medium font-mono">{encumbrance.numeroRegistro}</span>
                       </div>
                     </div>
+                    {numeroCnj && (
+                      <ConsultarProcessoButton numeroCnj={numeroCnj} contexto={encumbrance.descricao} />
+                    )}
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         </CardContent>
       </Card>
