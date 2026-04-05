@@ -18,6 +18,9 @@ export type AdminUser = {
   plan: 'freemium' | 'standard' | 'admin';
   analysisCount: number;
   createdAt: string;
+  tipoUsuario: string | null;
+  oabNumero: string | null;
+  oabUf: string | null;
 };
 
 export type AdminStats = {
@@ -102,24 +105,35 @@ export async function getAllUsers(): Promise<AdminUser[]> {
   const admin = createAdminClient();
 
   const { data: authUsers } = await admin.auth.admin.listUsers();
-  const { data: profiles } = await admin.from('profiles').select('id, plan, created_at');
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: profiles } = await (admin as any)
+    .from('profiles')
+    .select('id, plan, created_at, tipo_usuario, oab_numero, oab_uf');
   const { data: analysisCounts } = await admin
     .from('analyses')
     .select('user_id');
 
-  const profileMap = new Map((profiles ?? []).map(p => [p.id, p]));
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const profileMap = new Map((profiles ?? []).map((p: any) => [p.id, p]));
   const countMap = new Map<string, number>();
   for (const a of analysisCounts ?? []) {
     countMap.set(a.user_id, (countMap.get(a.user_id) ?? 0) + 1);
   }
 
-  return (authUsers?.users ?? []).map(u => ({
-    id: u.id,
-    email: u.email ?? '—',
-    plan: (profileMap.get(u.id)?.plan ?? 'freemium') as AdminUser['plan'],
-    analysisCount: countMap.get(u.id) ?? 0,
-    createdAt: profileMap.get(u.id)?.created_at ?? u.created_at,
-  })).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return (authUsers?.users ?? []).map(u => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const p = profileMap.get(u.id) as any;
+    return {
+      id: u.id,
+      email: u.email ?? '—',
+      plan: (p?.plan ?? 'freemium') as AdminUser['plan'],
+      analysisCount: countMap.get(u.id) ?? 0,
+      createdAt: p?.created_at ?? u.created_at,
+      tipoUsuario: p?.tipo_usuario ?? null,
+      oabNumero: p?.oab_numero ?? null,
+      oabUf: p?.oab_uf ?? null,
+    };
+  }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
 export async function updateUserPlan(

@@ -1,6 +1,6 @@
 'use client';
 
-import { Building2, LogOut, User, LayoutDashboard, ClipboardList, ShieldCheck } from 'lucide-react';
+import { Building2, LogOut, User, LayoutDashboard, ClipboardList, ShieldCheck, UserCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -58,10 +58,13 @@ export function Header({ isAdmin }: HeaderProps) {
 
           {user && (
             <div className="flex items-center gap-2 ml-4 pl-4 border-l border-white/20">
-              <div className="flex items-center gap-1.5 text-sm text-white/70">
-                <User className="w-4 h-4" />
+              <Link
+                href="/perfil"
+                className="flex items-center gap-1.5 text-sm text-white/70 hover:text-white hover:bg-white/10 px-2 py-1.5 rounded-lg transition-colors"
+              >
+                <UserCircle className="w-4 h-4" />
                 <span className="hidden md:inline">{user.email}</span>
-              </div>
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors"

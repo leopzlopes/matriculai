@@ -66,3 +66,62 @@ export async function getPlanInfoForUser(userId: string): Promise<PlanInfo> {
   const used = countResult.count ?? 0;
   return { plan, used, limit: FREEMIUM_LIMIT, canUpload: used < FREEMIUM_LIMIT };
 }
+
+export type ProfileData = {
+  tipo_usuario: string | null;
+  oab_numero: string | null;
+  oab_uf: string | null;
+};
+
+export async function getProfileData(): Promise<ProfileData | null> {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const admin = createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  const { data } = await admin
+    .from('profiles')
+    .select('tipo_usuario, oab_numero, oab_uf')
+    .eq('id', user.id)
+    .single();
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const d = data as any;
+  return {
+    tipo_usuario: d?.tipo_usuario ?? null,
+    oab_numero: d?.oab_numero ?? null,
+    oab_uf: d?.oab_uf ?? null,
+  };
+}
+
+export async function updateProfile(data: {
+  tipo_usuario?: string;
+  oab_numero?: string;
+  oab_uf?: string;
+}): Promise<{ error?: string }> {
+  const supabase = await createSupabaseServerClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'Não autenticado' };
+
+  const admin = createClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (admin as any)
+    .from('profiles')
+    .update({
+      tipo_usuario: data.tipo_usuario ?? null,
+      oab_numero: data.oab_numero ?? null,
+      oab_uf: data.oab_uf ?? null,
+      is_advogado: data.tipo_usuario === 'advogado',
+    })
+    .eq('id', user.id);
+
+  if (error) return { error: error.message };
+  return {};
+}
