@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Building2, Loader2 } from 'lucide-react';
+import { Building2, Loader2, Mail } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
@@ -52,16 +52,23 @@ export function SignupPage() {
           <p className="text-sm text-slate-400 mb-6">Comece gratuitamente</p>
 
           {success ? (
-            <div className="text-center space-y-4 py-4">
-              <div className="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto">
-                <svg className="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+            <div className="text-center py-4">
+              <div className="w-16 h-16 bg-[#0C447C]/8 rounded-2xl flex items-center justify-center mx-auto mb-5">
+                <Mail className="w-8 h-8 text-[#0C447C]" />
               </div>
-              <p className="text-sm text-slate-700 font-medium">Conta criada com sucesso!</p>
-              <p className="text-sm text-slate-400">Verifique seu e-mail para confirmar o cadastro.</p>
-              <Link href="/login" className="inline-block text-sm text-[#0C447C] font-medium hover:underline">
-                Ir para o login →
+              <h3 className="text-base font-bold text-[#111219] mb-2">Confirme seu e-mail</h3>
+              <p className="text-sm text-slate-500 mb-1">
+                Enviamos um link de confirmação para:
+              </p>
+              <p className="text-sm font-semibold text-[#111219] mb-5">{email}</p>
+              <p className="text-sm text-slate-500 mb-6">
+                Acesse seu e-mail e clique no link para ativar sua conta. Se não encontrar, verifique a pasta de spam ou lixo eletrônico.
+              </p>
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700 text-left mb-6">
+                <span className="font-semibold">Não recebeu?</span> O e-mail pode levar alguns minutos. Verifique também a pasta <span className="font-semibold">Spam</span> ou <span className="font-semibold">Promoções</span>.
+              </div>
+              <Link href="/login" className="inline-flex items-center justify-center w-full py-2.5 bg-[#0C447C] text-white rounded-full font-semibold text-sm hover:bg-[#185FA5] transition-colors">
+                Ir para o login
               </Link>
             </div>
           ) : (

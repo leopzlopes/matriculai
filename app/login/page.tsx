@@ -34,15 +34,15 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
-        <div className="flex items-center justify-center gap-3 mb-8">
+        <a href="/landing.html" className="flex items-center justify-center gap-3 mb-8 group">
           <div className="w-11 h-11 bg-[#0C447C] rounded-xl flex items-center justify-center">
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#111219]">MatriculAI</h1>
+            <h1 className="text-xl font-bold text-[#111219] group-hover:text-[#0C447C] transition-colors">MatriculAI</h1>
             <p className="text-xs text-slate-400">Due Diligence Imobiliária</p>
           </div>
-        </div>
+        </a>
 
         <div className="bg-white rounded-2xl border border-black/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.06)] p-8">
           <h2 className="text-xl font-bold text-[#111219] mb-1">Entrar</h2>
@@ -102,6 +102,12 @@ export default function LoginPage() {
               Cadastre-se
             </Link>
           </p>
+
+          <div className="mt-4 pt-4 border-t border-black/[0.06] text-center">
+            <a href="/landing.html" className="text-xs text-slate-400 hover:text-[#0C447C] transition-colors">
+              ← Conhecer o MatriculAI
+            </a>
+          </div>
         </div>
       </div>
     </div>
