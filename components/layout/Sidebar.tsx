@@ -13,6 +13,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  ClipboardList,
 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -31,6 +32,7 @@ const PLAN_BADGE: Record<string, { label: string; className: string }> = {
 const NAV_LINKS = [
   { href: '/', label: 'Análises', icon: FileSearch, exact: true },
   { href: '/documentos', label: 'Documentos', icon: FileText, exact: false },
+  { href: '/avaliacoes', label: 'Avaliações', icon: ClipboardList, exact: false },
   { href: '/processos', label: 'Processos', icon: Scale, exact: true },
 ];
 

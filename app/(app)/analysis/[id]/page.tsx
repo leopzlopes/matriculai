@@ -16,7 +16,7 @@ import type {
   Modulo1Result,
   Modulo2Result,
 } from '@/lib/ai/types';
-import { ArrowLeft, FileText } from 'lucide-react';
+import { ArrowLeft, FileText, ClipboardList } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -108,6 +108,38 @@ export default async function AnalysisDetailPage({ params }: AnalysisDetailPageP
         checklistData={checklistData}
         contexto={contexto}
       />
+
+      {/* Card: Solicitar laudo profissional */}
+      {analysis.status === 'completed' && (() => {
+        const params = new URLSearchParams({ from_matricula: analysis.id });
+        const tipoRaw = propertyData?.tipoImovel?.toLowerCase() ?? '';
+        if (tipoRaw) params.set('tipo', tipoRaw.includes('comercial') ? 'comercial' : tipoRaw.includes('rural') ? 'rural' : tipoRaw.includes('industrial') ? 'industrial' : tipoRaw.includes('terreno') ? 'terreno' : 'residencial');
+        const enderecoObj = propertyData?.endereco;
+        if (enderecoObj?.logradouro) params.set('endereco', [enderecoObj.logradouro, enderecoObj.numero, enderecoObj.bairro].filter(Boolean).join(', '));
+        if (enderecoObj?.cidade) params.set('cidade', enderecoObj.cidade);
+        if (enderecoObj?.estado) params.set('uf', enderecoObj.estado);
+        if (propertyData?.metragem?.areaTotal) params.set('area_total_m2', String(propertyData.metragem.areaTotal));
+        return (
+          <div className="mt-8 bg-gradient-to-r from-[#0C447C]/5 to-[#0C447C]/10 border border-[#0C447C]/20 rounded-2xl p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 bg-[#0C447C]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <ClipboardList className="w-5 h-5 text-[#0C447C]" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-[#111219]">Precisa de um laudo oficial assinado por CREA?</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Conecte-se com avaliadores credenciados na nossa rede e receba propostas.</p>
+              </div>
+            </div>
+            <Link
+              href={`/avaliacoes/nova?${params.toString()}`}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0C447C] text-white text-sm font-medium rounded-xl hover:bg-[#0C447C]/90 transition-colors flex-shrink-0 whitespace-nowrap"
+            >
+              <ClipboardList className="w-4 h-4" />
+              Solicitar laudo profissional
+            </Link>
+          </div>
+        );
+      })()}
     </div>
   );
 }
