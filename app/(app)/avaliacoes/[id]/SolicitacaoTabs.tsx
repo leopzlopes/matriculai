@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Star, CheckCircle, XCircle, MessageSquare, ChevronDown, ChevronUp, Award, MapPin, Calendar, DollarSign, Home } from 'lucide-react';
 import { aceitarProposta, recusarProposta } from '@/lib/actions/avaliacoes';
 import { PropostaForm } from './PropostaForm';
@@ -228,6 +229,7 @@ interface Props {
 }
 
 export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, minhaPropostaId }: Props) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<'detalhes' | 'propostas' | 'chat' | 'proposta_form'>('detalhes');
   const [propostasState, setPropostasState] = useState(propostas);
   const [loading, setLoading] = useState<string | null>(null);
@@ -242,7 +244,7 @@ export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, m
   async function handleAceitar(propostaId: string) {
     setLoading(propostaId);
     setError('');
-    const { error: err } = await aceitarProposta(propostaId);
+    const { error: err, propostaId: pid, solicitacaoId: sid } = await aceitarProposta(propostaId);
     setLoading(null);
     if (err) { setError(err); return; }
     // Atualizar estado local
@@ -252,6 +254,10 @@ export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, m
         status: p.id === propostaId ? 'aceita' : p.status === 'enviada' ? 'recusada' : p.status,
       }))
     );
+    // Redirecionar para página de pagamento
+    if (pid && sid) {
+      router.push(`/avaliacoes/${sid}/pagamento?propostaId=${pid}`);
+    }
   }
 
   async function handleRecusar(propostaId: string) {

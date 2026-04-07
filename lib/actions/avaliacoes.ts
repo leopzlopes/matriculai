@@ -209,7 +209,7 @@ export async function getPropostasDaSolicitacao(
   }
 }
 
-export async function aceitarProposta(propostaId: string): Promise<{ error?: string }> {
+export async function aceitarProposta(propostaId: string): Promise<{ error?: string; propostaId?: string; solicitacaoId?: string }> {
   try {
     const supabase = await createSupabaseServerClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -235,6 +235,18 @@ export async function aceitarProposta(propostaId: string): Promise<{ error?: str
 
     if (!sol || sol.user_id !== user.id) return { error: 'Sem permissão' };
 
+    // Guard: verificar se avaliador tem stripe_account_id configurado
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: avPerf } = await (supabase as any)
+      .from('avaliadores_perfil')
+      .select('stripe_account_id')
+      .eq('user_id', proposta.avaliador_id)
+      .maybeSingle();
+
+    if (!avPerf?.stripe_account_id) {
+      return { error: 'O avaliador ainda não configurou o recebimento de pagamentos. Aguarde ou escolha outra proposta.' };
+    }
+
     // Marcar proposta aceita
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     await (supabase as any)
@@ -258,7 +270,9 @@ export async function aceitarProposta(propostaId: string): Promise<{ error?: str
       .eq('id', proposta.solicitacao_id);
 
     if (updateError) return { error: updateError.message };
-    return {};
+
+    // Retornar IDs para o front iniciar o checkout de pagamento
+    return { propostaId, solicitacaoId: proposta.solicitacao_id };
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Erro ao aceitar proposta' };
   }

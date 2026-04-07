@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CheckCircle, AlertCircle } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { CheckCircle, AlertCircle, CreditCard, ExternalLink } from 'lucide-react';
 import {
   getOrCreateAvaliadorPerfil,
   updateAvaliadorPerfil,
@@ -19,11 +20,16 @@ function validarCrea(valor: string): boolean {
 }
 
 export default function PerfilAvaliadorPage() {
+  const searchParams = useSearchParams();
   const [perfil, setPerfil] = useState<AvaliadorPerfil | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+  const [onboardingLoading, setOnboardingLoading] = useState(false);
+
+  // Feedback de retorno do onboarding Stripe
+  const onboardStatus = searchParams.get('onboard');
 
   // Credenciais
   const [creaNumero, setCreaNumero] = useState('');
@@ -99,6 +105,20 @@ export default function PerfilAvaliadorPage() {
     if (err) { setError(err); return; }
     setSuccess('Perfil atualizado!');
     setTimeout(() => setSuccess(''), 3000);
+  }
+
+  async function handleOnboarding() {
+    setOnboardingLoading(true);
+    try {
+      const res = await fetch('/api/stripe/connect/onboard', { method: 'POST' });
+      const data = await res.json();
+      if (data.url) window.location.href = data.url;
+      else setError(data.error ?? 'Erro ao configurar pagamentos');
+    } catch {
+      setError('Erro ao conectar com o servidor');
+    } finally {
+      setOnboardingLoading(false);
+    }
   }
 
   function toggleEspecialidade(e: TipoImovel) {
@@ -289,6 +309,58 @@ export default function PerfilAvaliadorPage() {
             {saving ? 'Salvando...' : 'Salvar perfil'}
           </button>
         </form>
+      </div>
+
+      {/* ---- Seção 3: Pagamentos ---- */}
+      <div className="bg-white border border-black/[0.08] rounded-2xl p-6">
+        <div className="flex items-center gap-2 mb-5">
+          <CreditCard className="w-4 h-4 text-slate-500" />
+          <h2 className="text-sm font-semibold text-[#111219]">Recebimento de Pagamentos</h2>
+        </div>
+
+        {onboardStatus === 'success' && (
+          <div className="mb-4 flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-700">
+            <CheckCircle className="w-4 h-4 flex-shrink-0" />
+            Conta configurada com sucesso!
+          </div>
+        )}
+        {onboardStatus === 'refresh' && (
+          <div className="mb-4 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-700">
+            <AlertCircle className="w-4 h-4 flex-shrink-0" />
+            O link expirou. Clique abaixo para tentar novamente.
+          </div>
+        )}
+
+        {perfil?.stripe_account_id ? (
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200">
+              <CheckCircle className="w-3.5 h-3.5" />
+              Pagamentos configurados
+            </span>
+            <a
+              href="/api/stripe/connect/dashboard"
+              className="inline-flex items-center gap-1 text-xs text-[#0C447C] hover:underline"
+            >
+              <ExternalLink className="w-3 h-3" />
+              Ver dashboard
+            </a>
+          </div>
+        ) : (
+          <div>
+            <p className="text-xs text-slate-500 mb-3">
+              Configure sua conta para receber pagamentos pelas avaliações realizadas na plataforma.
+            </p>
+            <button
+              type="button"
+              onClick={handleOnboarding}
+              disabled={onboardingLoading}
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#0C447C] text-white text-sm font-medium rounded-xl hover:bg-[#0C447C]/90 disabled:opacity-50 transition-colors"
+            >
+              <CreditCard className="w-4 h-4" />
+              {onboardingLoading ? 'Redirecionando...' : 'Configurar recebimento de pagamentos'}
+            </button>
+          </div>
+        )}
       </div>
 
       <p className="text-xs text-slate-400 text-center">
