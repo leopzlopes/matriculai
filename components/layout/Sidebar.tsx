@@ -31,6 +31,7 @@ const PLAN_BADGE: Record<string, { label: string; className: string }> = {
 const NAV_LINKS = [
   { href: '/', label: 'Análises', icon: FileSearch, exact: true },
   { href: '/documentos', label: 'Documentos', icon: FileText, exact: false },
+  { href: '/processos', label: 'Processos', icon: Scale, exact: true },
 ];
 
 export function Sidebar({ userEmail, plan, isAdmin }: SidebarProps) {
@@ -86,15 +87,6 @@ export function Sidebar({ userEmail, plan, isAdmin }: SidebarProps) {
             </Link>
           );
         })}
-
-        {/* Processos — Em breve */}
-        <div className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 cursor-not-allowed select-none">
-          <Scale className="w-4 h-4 flex-shrink-0 text-slate-300" />
-          Processos
-          <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 bg-slate-100 text-slate-400 rounded-full">
-            Em breve
-          </span>
-        </div>
 
         {isAdmin && (
           <>
