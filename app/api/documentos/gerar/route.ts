@@ -2,10 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { getAnthropicClient, AI_MODEL } from '@/lib/ai/anthropic';
 import { buildPromptDocumento } from '@/lib/documentos/prompts';
-import type { DadosDocumento, DocumentoGerado } from '@/lib/documentos/types';
+import type { DadosDocumento, DocumentoGerado, TipoContrato } from '@/lib/documentos/types';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
+
+const TIPOS_CONTRATO = new Set<TipoContrato>([
+  'compromisso_compra_venda',
+  'compra_venda_financiamento',
+  'locacao_residencial',
+  'locacao_comercial',
+  'cessao_direitos',
+]);
 
 export async function POST(request: NextRequest) {
   const supabase = await createSupabaseServerClient();
@@ -39,7 +47,24 @@ export async function POST(request: NextRequest) {
     }
 
     const result = JSON.parse(jsonMatch[0]) as DocumentoGerado;
-    return NextResponse.json(result);
+
+    // Salvar no histórico (falha silenciosa — não bloqueia retorno ao cliente)
+    const tipo = TIPOS_CONTRATO.has(dados.tipo as TipoContrato) ? 'contrato' : 'escritura';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: saved } = await (supabase as any)
+      .from('documentos_gerados')
+      .insert({
+        user_id: user.id,
+        tipo,
+        subtipo: dados.tipo,
+        titulo: result.titulo,
+        texto: result.texto,
+        dados: dados,
+      })
+      .select('id')
+      .single();
+
+    return NextResponse.json({ ...result, savedId: saved?.id ?? null });
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Erro ao gerar documento';
     return NextResponse.json({ error: msg }, { status: 500 });

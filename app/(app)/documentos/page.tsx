@@ -1,7 +1,29 @@
 import Link from 'next/link';
-import { FileText, Scroll, ArrowRight } from 'lucide-react';
+import { FileText, Scroll, ArrowRight, Clock, Trash2, ExternalLink } from 'lucide-react';
+import { getUserDocumentos } from '@/lib/actions/documentos';
+import { deleteDocumento } from '@/lib/actions/documentos';
 
-export default function DocumentosPage() {
+async function DeleteButton({ id }: { id: string }) {
+  async function handleDelete() {
+    'use server';
+    await deleteDocumento(id);
+  }
+  return (
+    <form action={handleDelete}>
+      <button
+        type="submit"
+        className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+        title="Deletar minuta"
+      >
+        <Trash2 className="w-3.5 h-3.5" />
+      </button>
+    </form>
+  );
+}
+
+export default async function DocumentosPage() {
+  const documentos = await getUserDocumentos();
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-3xl">
       <div className="mb-8">
@@ -73,6 +95,55 @@ export default function DocumentosPage() {
             ))}
           </ul>
         </Link>
+      </div>
+
+      {/* Histórico */}
+      <div className="mt-10">
+        <div className="flex items-center gap-2 mb-4">
+          <Clock className="w-4 h-4 text-slate-400" />
+          <h2 className="text-sm font-semibold text-slate-700">Minutas Geradas</h2>
+          {documentos.length > 0 && (
+            <span className="ml-auto text-xs text-slate-400">{documentos.length} minuta{documentos.length !== 1 ? 's' : ''}</span>
+          )}
+        </div>
+
+        {documentos.length === 0 ? (
+          <div className="bg-white border border-black/[0.06] rounded-2xl p-8 text-center">
+            <p className="text-sm text-slate-400">Nenhuma minuta gerada ainda.</p>
+            <p className="text-xs text-slate-300 mt-1">As minutas geradas aparecerão aqui automaticamente.</p>
+          </div>
+        ) : (
+          <div className="bg-white border border-black/[0.08] rounded-2xl divide-y divide-black/[0.05]">
+            {documentos.map((doc) => {
+              const isEscritura = doc.tipo === 'escritura';
+              const dataFormatada = new Date(doc.created_at).toLocaleDateString('pt-BR', {
+                day: '2-digit', month: 'short', year: 'numeric',
+              });
+              return (
+                <div key={doc.id} className="flex items-center gap-3 px-4 py-3">
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${isEscritura ? 'bg-[#0C447C]/8' : 'bg-emerald-50'}`}>
+                    {isEscritura
+                      ? <Scroll className="w-4 h-4 text-[#0C447C]" />
+                      : <FileText className="w-4 h-4 text-emerald-600" />
+                    }
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-[#111219] truncate">{doc.titulo}</p>
+                    <p className="text-xs text-slate-400">{dataFormatada}</p>
+                  </div>
+                  <Link
+                    href={`/documentos/${doc.id}`}
+                    className="inline-flex items-center gap-1 text-xs text-[#0C447C] hover:underline flex-shrink-0"
+                  >
+                    <ExternalLink className="w-3 h-3" />
+                    Abrir
+                  </Link>
+                  <DeleteButton id={doc.id} />
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       <p className="text-xs text-slate-400 text-center mt-8">
