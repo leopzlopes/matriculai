@@ -7,6 +7,7 @@ import { Star, CheckCircle, XCircle, MessageSquare, ChevronDown, ChevronUp, Awar
 import { aceitarProposta, recusarProposta } from '@/lib/actions/avaliacoes';
 import { PropostaForm } from './PropostaForm';
 import { AvaliadorDrawer } from './AvaliadorDrawer';
+import { LaudoSection } from './LaudoSection';
 import type { SolicitacaoSalva, PropostaSalva } from '@/lib/avaliacoes/types';
 import {
   LABEL_TIPO_IMOVEL,
@@ -49,12 +50,25 @@ function PropostaCard({
 
   const podeDecidir = isDono && (solStatus === 'aberta' || solStatus === 'em_negociacao') && proposta.status === 'enviada';
 
-  const statusBadge = {
+  const statusBadgeMap: Record<string, string> = {
     enviada: 'bg-slate-100 text-slate-600',
     aceita: 'bg-emerald-50 text-emerald-700',
     recusada: 'bg-red-50 text-red-600',
     cancelada: 'bg-slate-100 text-slate-400',
-  }[proposta.status];
+    pago: 'bg-blue-50 text-blue-700',
+    concluido: 'bg-slate-100 text-slate-600',
+  };
+  const statusBadge = statusBadgeMap[proposta.status] ?? 'bg-slate-100 text-slate-600';
+
+  const statusLabelMap: Record<string, string> = {
+    enviada: 'Aguardando',
+    aceita: 'Aceita',
+    recusada: 'Recusada',
+    cancelada: 'Cancelada',
+    pago: 'Pago',
+    concluido: 'Concluído',
+  };
+  const statusLabel = statusLabelMap[proposta.status] ?? proposta.status;
 
   return (
     <>
@@ -82,7 +96,7 @@ function PropostaCard({
                 </span>
               )}
               <span className={`ml-auto text-[10px] font-medium px-2 py-0.5 rounded-full ${statusBadge}`}>
-                {proposta.status === 'enviada' ? 'Aguardando' : proposta.status === 'aceita' ? 'Aceita' : proposta.status === 'recusada' ? 'Recusada' : 'Cancelada'}
+                {statusLabel}
               </span>
             </div>
 
@@ -230,7 +244,7 @@ interface Props {
 
 export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, minhaPropostaId }: Props) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'detalhes' | 'propostas' | 'chat' | 'proposta_form'>('detalhes');
+  const [activeTab, setActiveTab] = useState<'detalhes' | 'propostas' | 'chat' | 'proposta_form' | 'entrega'>('detalhes');
   const [propostasState, setPropostasState] = useState(propostas);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -240,6 +254,11 @@ export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, m
 
   // Chat: qual proposta mostrar?
   const chatPropostaId = minhaPropostaId ?? (isDono && propostasState.length > 0 ? propostasState[0].id : undefined);
+
+  // Proposta da entrega: pago ou concluido
+  const propostaEntrega = propostasState.find((p) => p.status === 'pago' || p.status === 'concluido')
+    ?? (isAvaliador && minhaPropostaId ? propostasState.find((p) => p.id === minhaPropostaId && (p.status === 'pago' || p.status === 'concluido')) : undefined);
+  const temEntrega = !!propostaEntrega || sol.status === 'aguardando_entrega' || sol.status === 'concluida';
 
   async function handleAceitar(propostaId: string) {
     setLoading(propostaId);
@@ -275,6 +294,7 @@ export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, m
     { id: 'detalhes', label: 'Detalhes' },
     ...(isDono ? [{ id: 'propostas', label: `Propostas (${totalPropostas})` }] : []),
     ...(chatPropostaId ? [{ id: 'chat', label: 'Mensagens' }] : []),
+    ...(temEntrega ? [{ id: 'entrega', label: 'Entrega' }] : []),
   ] as { id: string; label: string }[];
 
   return (
@@ -374,6 +394,20 @@ export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, m
             <Home className="w-4 h-4" />
             Enviar minha proposta
           </button>
+        </div>
+      )}
+
+      {/* Entrega do laudo */}
+      {activeTab === 'entrega' && temEntrega && propostaEntrega && (
+        <LaudoSection
+          proposta={propostaEntrega}
+          isDono={isDono}
+          isAvaliador={isAvaliador}
+        />
+      )}
+      {activeTab === 'entrega' && temEntrega && !propostaEntrega && (
+        <div className="bg-white border border-black/[0.08] rounded-2xl p-10 text-center">
+          <p className="text-sm text-slate-400">Aguardando confirmação do pagamento...</p>
         </div>
       )}
 

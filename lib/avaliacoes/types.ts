@@ -21,6 +21,7 @@ export type StatusSolicitacao =
   | 'aberta'
   | 'em_negociacao'
   | 'contratada'
+  | 'aguardando_entrega'
   | 'concluida'
   | 'cancelada'
   | 'em_disputa';
@@ -29,7 +30,9 @@ export type StatusProposta =
   | 'enviada'
   | 'aceita'
   | 'recusada'
-  | 'cancelada';
+  | 'cancelada'
+  | 'pago'
+  | 'concluido';
 
 export type AcessoImovel = 'livre' | 'agendamento' | 'indisponivel';
 
@@ -130,6 +133,8 @@ export interface PropostaSalva {
   observacoes: string | null;
   status: StatusProposta;
   stripe_payment_intent_id: string | null;
+  laudo_url: string | null;
+  laudo_entregue_at: string | null;
   created_at: string;
   // join opcional
   avaliador?: AvaliadorPerfil;
@@ -226,6 +231,7 @@ export const LABEL_STATUS: Record<StatusSolicitacao, string> = {
   aberta: 'Aberta',
   em_negociacao: 'Em Negociação',
   contratada: 'Contratada',
+  aguardando_entrega: 'Aguardando Entrega',
   concluida: 'Concluída',
   cancelada: 'Cancelada',
   em_disputa: 'Em Disputa',
@@ -235,6 +241,7 @@ export const STATUS_COLOR: Record<StatusSolicitacao, string> = {
   aberta: 'bg-emerald-50 text-emerald-700',
   em_negociacao: 'bg-amber-50 text-amber-700',
   contratada: 'bg-blue-50 text-blue-700',
+  aguardando_entrega: 'bg-purple-50 text-purple-700',
   concluida: 'bg-slate-100 text-slate-600',
   cancelada: 'bg-red-50 text-red-600',
   em_disputa: 'bg-orange-50 text-orange-700',

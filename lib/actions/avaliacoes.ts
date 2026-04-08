@@ -1,7 +1,10 @@
 'use server';
 
+import Stripe from 'stripe';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { FotoUploadConfig } from '@/lib/avaliacoes/types';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2026-03-25.dahlia' });
 import type {
   AvaliadorPerfil,
   SolicitacaoSalva,
@@ -449,6 +452,128 @@ export async function aceitarDeclaracao(): Promise<{ error?: string }> {
     return {};
   } catch (e) {
     return { error: e instanceof Error ? e.message : 'Erro ao aceitar declaração' };
+  }
+}
+
+// -------------------------------------------------------
+// Entrega do laudo
+// -------------------------------------------------------
+
+export async function uploadLaudo(
+  propostaId: string,
+  file: File
+): Promise<{ url?: string; error?: string }> {
+  try {
+    if (file.type !== 'application/pdf') {
+      return { error: 'O laudo deve ser um arquivo PDF.' };
+    }
+    if (file.size > 20 * 1024 * 1024) {
+      return { error: 'Arquivo muito grande. Máximo: 20 MB.' };
+    }
+
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: 'Não autenticado' };
+
+    // Verificar que o usuário é o avaliador desta proposta e que está paga
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: proposta } = await (supabase as any)
+      .from('avaliacoes_propostas')
+      .select('id, avaliador_id, status')
+      .eq('id', propostaId)
+      .single();
+
+    if (!proposta || proposta.avaliador_id !== user.id) return { error: 'Sem permissão' };
+    if (proposta.status !== 'pago') return { error: 'Esta proposta não está apta para entrega de laudo.' };
+
+    const path = `laudos/${propostaId}/${Date.now()}.pdf`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('avaliacoes-fotos')
+      .upload(path, file, { upsert: true });
+
+    if (uploadError) return { error: uploadError.message };
+
+    const { data: signedData, error: urlError } = await supabase.storage
+      .from('avaliacoes-fotos')
+      .createSignedUrl(path, 60 * 60 * 24 * 365); // 1 ano
+
+    if (urlError || !signedData) return { error: urlError?.message ?? 'Erro ao gerar URL' };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: updateError } = await (supabase as any)
+      .from('avaliacoes_propostas')
+      .update({ laudo_url: signedData.signedUrl, laudo_entregue_at: new Date().toISOString() })
+      .eq('id', propostaId);
+
+    if (updateError) return { error: updateError.message };
+    return { url: signedData.signedUrl };
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erro no upload do laudo' };
+  }
+}
+
+export async function confirmarRecebimento(
+  propostaId: string
+): Promise<{ error?: string }> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: 'Não autenticado' };
+
+    // Buscar proposta
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: proposta } = await (supabase as any)
+      .from('avaliacoes_propostas')
+      .select('id, solicitacao_id, avaliador_id, valor, status, stripe_payment_intent_id, laudo_url')
+      .eq('id', propostaId)
+      .single();
+
+    if (!proposta) return { error: 'Proposta não encontrada' };
+    if (proposta.status !== 'pago') return { error: 'Pagamento ainda não confirmado.' };
+    if (!proposta.laudo_url) return { error: 'O avaliador ainda não entregou o laudo.' };
+
+    // Verificar que o usuário é dono da solicitação
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: sol } = await (supabase as any)
+      .from('avaliacoes_solicitacoes')
+      .select('id, user_id')
+      .eq('id', proposta.solicitacao_id)
+      .single();
+
+    if (!sol || sol.user_id !== user.id) return { error: 'Sem permissão' };
+
+    // Capturar o PaymentIntent no Stripe
+    if (proposta.stripe_payment_intent_id) {
+      try {
+        await stripe.paymentIntents.capture(proposta.stripe_payment_intent_id);
+      } catch (stripeErr) {
+        console.error('Stripe capture error:', stripeErr);
+        return { error: 'Erro ao processar o pagamento. Tente novamente.' };
+      }
+    }
+
+    // Atualizar proposta → concluido
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
+      .from('avaliacoes_propostas')
+      .update({ status: 'concluido' })
+      .eq('id', propostaId);
+
+    // Atualizar solicitação → concluida + valor_pago
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any)
+      .from('avaliacoes_solicitacoes')
+      .update({ status: 'concluida', valor_pago: proposta.valor })
+      .eq('id', proposta.solicitacao_id);
+
+    // Incrementar total_avaliacoes do avaliador
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).rpc('increment_total_avaliacoes', { avaliador_uid: proposta.avaliador_id });
+
+    return {};
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erro ao confirmar recebimento' };
   }
 }
 
