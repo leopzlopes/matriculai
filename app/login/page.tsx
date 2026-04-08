@@ -39,7 +39,7 @@ export default function LoginPage() {
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#111219] group-hover:text-[#0C447C] transition-colors">MatriculAI</h1>
+            <h1 className="text-xl font-bold text-[#111219] group-hover:text-[#0C447C] transition-colors">Imovalia</h1>
             <p className="text-xs text-slate-400">Due Diligence Imobiliária</p>
           </div>
         </a>
@@ -105,7 +105,7 @@ export default function LoginPage() {
 
           <div className="mt-4 pt-4 border-t border-black/[0.06] text-center">
             <a href="/landing.html" className="text-xs text-slate-400 hover:text-[#0C447C] transition-colors">
-              ← Conhecer o MatriculAI
+              ← Conhecer o Imovalia
             </a>
           </div>
         </div>

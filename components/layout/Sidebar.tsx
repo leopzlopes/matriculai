@@ -63,7 +63,7 @@ export function Sidebar({ userEmail, plan, isAdmin }: SidebarProps) {
             <Building2 className="w-4 h-4 text-[#0C447C]" />
           </div>
           <div>
-            <span className="text-base font-bold text-[#111219] tracking-tight">MatriculAI</span>
+            <span className="text-base font-bold text-[#111219] tracking-tight">Imovalia</span>
             <p className="text-[10px] text-slate-400 leading-none mt-0.5">Due Diligence Imobiliária</p>
           </div>
         </div>
@@ -162,7 +162,7 @@ export function Sidebar({ userEmail, plan, isAdmin }: SidebarProps) {
         </button>
         <div className="flex items-center gap-2">
           <Building2 className="w-4 h-4 text-[#0C447C]" />
-          <span className="text-sm font-bold text-[#111219]">MatriculAI</span>
+          <span className="text-sm font-bold text-[#111219]">Imovalia</span>
         </div>
       </div>
 

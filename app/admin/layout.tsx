@@ -42,7 +42,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             <ShieldCheck className="w-4 h-4 text-white/70" />
             <span className="text-xs font-semibold text-white/60 uppercase tracking-widest">Admin</span>
           </div>
-          <span className="text-lg font-bold text-white">MatriculAI</span>
+          <span className="text-lg font-bold text-white">Imovalia</span>
         </div>
 
         <nav className="flex-1 px-3 py-4 space-y-1">

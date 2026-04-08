@@ -53,7 +53,7 @@ export function SignupPage() {
             <Building2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-[#111219]">MatriculAI</h1>
+            <h1 className="text-xl font-bold text-[#111219]">Imovalia</h1>
             <p className="text-xs text-slate-400">Due Diligence Imobiliária</p>
           </div>
         </div>

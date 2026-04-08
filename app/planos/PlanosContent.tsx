@@ -38,7 +38,7 @@ export default function PlanosContent() {
       <header className="bg-white border-b border-slate-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="text-xl font-bold text-slate-900">
-            MatriculAI
+            Imovalia
           </Link>
           <Link href="/" className="text-sm text-slate-500 hover:text-slate-900">
             ← Voltar ao dashboard
@@ -69,7 +69,7 @@ export default function PlanosContent() {
         )}
 
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-slate-900 mb-3">Planos MatriculAI</h1>
+          <h1 className="text-3xl font-bold text-slate-900 mb-3">Planos Imovalia</h1>
           <p className="text-slate-500 text-lg">
             Análise de matrículas com inteligência artificial — rápida, precisa e segura.
           </p>

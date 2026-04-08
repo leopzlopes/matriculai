@@ -407,7 +407,7 @@ export async function generateDocxBuffer(data: ReportData): Promise<Buffer> {
               new Paragraph({
                 children: [
                   new TextRun({
-                    text: 'Minuta gerada por IA — revisar antes de uso oficial  |  MatriculAI  |  ' + fmtDate(createdAt),
+                    text: 'Minuta gerada por IA — revisar antes de uso oficial  |  Imovalia  |  ' + fmtDate(createdAt),
                     size: 14,
                     color: '94A3B8',
                     italics: true,

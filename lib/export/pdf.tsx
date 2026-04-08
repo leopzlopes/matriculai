@@ -233,14 +233,14 @@ function RelatorioPDF({ data }: { data: ReportData }) {
 
   return (
     <Document
-      title={`Relatorio MatriculAI - Matricula ${registrationNumber}`}
-      author="MatriculAI"
+      title={`Relatorio Imovalia - Matricula ${registrationNumber}`}
+      author="Imovalia"
       subject="Analise de Matricula de Imovel"
     >
       <Page size="A4" style={styles.page}>
         {/* Fixed Header */}
         <View style={styles.headerFixed} fixed>
-          <Text style={styles.headerBrand}>MatriculAI</Text>
+          <Text style={styles.headerBrand}>Imovalia</Text>
           <Text style={styles.headerMeta}>
             Matricula {registrationNumber} | Gerado em {fmtDate(createdAt)}
           </Text>

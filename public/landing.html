@@ -1,1063 +1,393 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MatriculAI — Due Diligence Imobiliária com IA</title>
-  <meta name="description" content="Analise matrículas de imóveis em segundos. IA especializada em due diligence imobiliária para advogados e operações jurídicas." />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --navy: #0C447C;
-      --navy-dark: #083460;
-      --navy-mid: #185FA5;
-      --bg: #fafafa;
-      --text: #111219;
-      --muted: #64748b;
-      --border: rgba(0,0,0,0.08);
-      --card-shadow: 0 4px 24px rgba(0,0,0,0.06);
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    a { text-decoration: none; color: inherit; }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ── NAV ── */
-    nav {
-      background: var(--navy);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .nav-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-logo {
-      width: 38px;
-      height: 38px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .nav-logo svg { width: 20px; height: 20px; }
-
-    .nav-brand-text h1 {
-      font-size: 17px;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.2;
-      letter-spacing: -0.3px;
-    }
-
-    .nav-brand-text p {
-      font-size: 11px;
-      color: rgba(255,255,255,0.55);
-      line-height: 1;
-      margin-top: 2px;
-    }
-
-    .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-ghost-nav {
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.8);
-      transition: background 0.15s, color 0.15s;
-      cursor: pointer;
-      border: none;
-      background: none;
-    }
-
-    .btn-ghost-nav:hover {
-      background: rgba(255,255,255,0.1);
-      color: #fff;
-    }
-
-    .btn-pill-white {
-      padding: 8px 20px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
-      background: #fff;
-      color: var(--navy);
-      transition: opacity 0.15s;
-      cursor: pointer;
-      border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .btn-pill-white:hover { opacity: 0.9; }
-
-    /* ── HERO ── */
-    .hero {
-      background: linear-gradient(160deg, var(--navy) 0%, #0f5fa0 60%, #1a7ed4 100%);
-      padding: 100px 0 80px;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    }
-
-    .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 999px;
-      padding: 6px 14px;
-      font-size: 12px;
-      font-weight: 500;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 28px;
-    }
-
-    .hero-badge-dot {
-      width: 6px;
-      height: 6px;
-      background: #4ade80;
-      border-radius: 50%;
-    }
-
-    .hero h2 {
-      font-size: clamp(32px, 5vw, 54px);
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.15;
-      letter-spacing: -1px;
-      margin-bottom: 20px;
-      max-width: 780px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .hero h2 span {
-      background: linear-gradient(90deg, #7dd3fc, #bae6fd);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero p {
-      font-size: 18px;
-      color: rgba(255,255,255,0.75);
-      max-width: 560px;
-      margin: 0 auto 40px;
-    }
-
-    .hero-cta {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .btn-pill-primary {
-      padding: 14px 32px;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 700;
-      background: #fff;
-      color: var(--navy);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      border: none;
-      transition: transform 0.15s, box-shadow 0.15s;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    }
-
-    .btn-pill-primary:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.25);
-    }
-
-    .btn-outline-white {
-      padding: 14px 28px;
-      border-radius: 999px;
-      font-size: 15px;
-      font-weight: 600;
-      background: transparent;
-      color: rgba(255,255,255,0.9);
-      border: 1.5px solid rgba(255,255,255,0.35);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .btn-outline-white:hover {
-      background: rgba(255,255,255,0.1);
-      border-color: rgba(255,255,255,0.6);
-    }
-
-    .hero-note {
-      margin-top: 20px;
-      font-size: 13px;
-      color: rgba(255,255,255,0.5);
-    }
-
-    /* ── LOGOS STRIP ── */
-    .logos-strip {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 20px 0;
-    }
-
-    .logos-strip-inner {
-      display: flex;
-      align-items: center;
-      gap: 32px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .logos-strip-label {
-      font-size: 12px;
-      color: var(--muted);
-      font-weight: 500;
-      white-space: nowrap;
-    }
-
-    .logos-strip-items {
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .logo-pill {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      border-radius: 999px;
-      background: #f1f5f9;
-      font-size: 12px;
-      font-weight: 600;
-      color: #475569;
-    }
-
-    /* ── SECTION COMMON ── */
-    .section { padding: 80px 0; }
-    .section-alt { background: #fff; }
-
-    .section-label {
-      display: inline-block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--navy);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-size: clamp(26px, 3.5vw, 38px);
-      font-weight: 800;
-      color: var(--text);
-      line-height: 1.2;
-      letter-spacing: -0.5px;
-      margin-bottom: 16px;
-    }
-
-    .section-sub {
-      font-size: 16px;
-      color: var(--muted);
-      max-width: 540px;
-    }
-
-    .section-header { margin-bottom: 56px; }
-
-    /* ── MODULES ── */
-    .modules-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-    }
-
-    .module-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 32px;
-      box-shadow: var(--card-shadow);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .module-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.09);
-    }
-
-    .module-icon {
-      width: 52px;
-      height: 52px;
-      background: rgba(12,68,124,0.08);
-      border-radius: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
-
-    .module-icon svg { width: 26px; height: 26px; color: var(--navy); }
-
-    .module-number {
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--navy);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 8px;
-    }
-
-    .module-card h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 10px;
-    }
-
-    .module-card p {
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    .module-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 16px;
-    }
-
-    .tag {
-      padding: 3px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 500;
-      background: rgba(12,68,124,0.07);
-      color: var(--navy);
-    }
-
-    /* ── HOW IT WORKS ── */
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 32px;
-      position: relative;
-    }
-
-    .step {
-      text-align: center;
-    }
-
-    .step-num {
-      width: 48px;
-      height: 48px;
-      background: var(--navy);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 800;
-      color: #fff;
-      margin: 0 auto 16px;
-    }
-
-    .step h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: var(--text);
-      margin-bottom: 8px;
-    }
-
-    .step p {
-      font-size: 14px;
-      color: var(--muted);
-    }
-
-    /* ── PRICING ── */
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .plan-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 36px 32px;
-      box-shadow: var(--card-shadow);
-      position: relative;
-      transition: transform 0.2s;
-    }
-
-    .plan-card:hover { transform: translateY(-2px); }
-
-    .plan-card.featured {
-      background: var(--navy);
-      border-color: var(--navy);
-    }
-
-    .plan-badge {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #4ade80;
-      color: #14532d;
-      font-size: 11px;
-      font-weight: 700;
-      padding: 4px 14px;
-      border-radius: 999px;
-    }
-
-    .plan-name {
-      font-size: 13px;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-
-    .plan-card.featured .plan-name { color: rgba(255,255,255,0.6); }
-
-    .plan-price {
-      font-size: 40px;
-      font-weight: 800;
-      color: var(--text);
-      line-height: 1;
-      margin-bottom: 4px;
-    }
-
-    .plan-card.featured .plan-price { color: #fff; }
-
-    .plan-price sup {
-      font-size: 18px;
-      font-weight: 600;
-      vertical-align: super;
-    }
-
-    .plan-price-note {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 24px;
-    }
-
-    .plan-card.featured .plan-price-note { color: rgba(255,255,255,0.5); }
-
-    .plan-features {
-      list-style: none;
-      margin-bottom: 28px;
-    }
-
-    .plan-features li {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-
-    .plan-card.featured .plan-features li { color: rgba(255,255,255,0.8); }
-
-    .check {
-      width: 18px;
-      height: 18px;
-      background: rgba(12,68,124,0.1);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .plan-card.featured .check { background: rgba(255,255,255,0.15); }
-
-    .check svg { width: 10px; height: 10px; color: var(--navy); }
-    .plan-card.featured .check svg { color: #fff; }
-
-    .btn-plan {
-      width: 100%;
-      padding: 12px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      transition: opacity 0.15s, transform 0.15s;
-      display: block;
-      text-align: center;
-    }
-
-    .btn-plan:hover { opacity: 0.9; transform: translateY(-1px); }
-
-    .btn-plan-outline {
-      background: transparent;
-      border: 1.5px solid rgba(12,68,124,0.2) !important;
-      border: none;
-      color: var(--navy);
-    }
-
-    .btn-plan-solid {
-      background: #fff;
-      color: var(--navy);
-    }
-
-    /* ── TESTIMONIAL ── */
-    .testimonial-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-    }
-
-    .testimonial-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 28px;
-      box-shadow: var(--card-shadow);
-    }
-
-    .stars {
-      color: #f59e0b;
-      font-size: 14px;
-      margin-bottom: 14px;
-    }
-
-    .testimonial-text {
-      font-size: 15px;
-      color: var(--text);
-      line-height: 1.7;
-      margin-bottom: 20px;
-    }
-
-    .testimonial-author {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .author-avatar {
-      width: 40px;
-      height: 40px;
-      background: var(--navy);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .author-name {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text);
-    }
-
-    .author-role {
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    /* ── FINAL CTA ── */
-    .cta-section {
-      background: linear-gradient(135deg, var(--navy) 0%, #0f5fa0 100%);
-      padding: 80px 0;
-      text-align: center;
-    }
-
-    .cta-section h2 {
-      font-size: clamp(28px, 4vw, 42px);
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -0.5px;
-      margin-bottom: 16px;
-    }
-
-    .cta-section p {
-      font-size: 17px;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 40px;
-    }
-
-    /* ── FOOTER ── */
-    footer {
-      background: #0a1628;
-      padding: 48px 0 32px;
-      color: rgba(255,255,255,0.5);
-    }
-
-    .footer-inner {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 32px;
-      margin-bottom: 40px;
-    }
-
-    .footer-brand h3 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 6px;
-    }
-
-    .footer-brand p {
-      font-size: 13px;
-      max-width: 260px;
-      line-height: 1.6;
-    }
-
-    .footer-links h4 {
-      font-size: 13px;
-      font-weight: 600;
-      color: rgba(255,255,255,0.8);
-      margin-bottom: 14px;
-    }
-
-    .footer-links ul { list-style: none; }
-
-    .footer-links li {
-      font-size: 13px;
-      margin-bottom: 8px;
-    }
-
-    .footer-links a {
-      color: rgba(255,255,255,0.5);
-      transition: color 0.15s;
-    }
-
-    .footer-links a:hover { color: rgba(255,255,255,0.9); }
-
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,0.08);
-      padding-top: 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
-      font-size: 12px;
-    }
-
-    .footer-disclaimer {
-      font-size: 11px;
-      color: rgba(255,255,255,0.3);
-      margin-top: 8px;
-    }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 640px) {
-      .nav-brand-text p { display: none; }
-      .btn-outline-white { display: none; }
-      .hero { padding: 72px 0 60px; }
-      .section { padding: 60px 0; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Imovalia — Inteligência imobiliária</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g950:#0a1f1a;--g900:#0d2b24;--g800:#0F4A3C;--g700:#0F6E56;--g600:#1D9E75;
+  --g100:#C8EFE2;--g50:#EAF7F2;
+  --slate-50:#F8F7F5;--slate-100:#F0EEE9;--slate-200:#E0DDD6;
+  --text-primary:#1A1A18;--text-secondary:#5C5B57;--text-tertiary:#9C9A94;
+  --border:#E8E6E0;--amber:#D4880A;
+}
+body{font-family:'DM Sans',sans-serif;background:#fff;color:var(--text-primary);-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{display:flex;align-items:center;justify-content:space-between;padding:1.25rem 2.5rem;border-bottom:0.5px solid var(--border);background:#fff;position:sticky;top:0;z-index:100}
+.logo{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--text-primary);letter-spacing:0.01em;text-decoration:none}
+.logo span{color:var(--g700)}
+.nav-links{display:flex;gap:1.5rem;align-items:center}
+.nav-link{font-size:13px;font-weight:400;color:var(--text-secondary);text-decoration:none;cursor:pointer}
+.nav-link:hover{color:var(--text-primary)}
+.btn-outline{background:transparent;color:var(--g700);border:1px solid var(--g700);border-radius:6px;padding:0.55rem 1.1rem;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none}
+.btn-primary{background:var(--g700);color:#fff;border:none;border-radius:6px;padding:0.55rem 1.1rem;font-size:13px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none}
+.btn-primary:hover{background:var(--g800)}
+
+/* HERO */
+.hero{background:var(--g950);padding:5.5rem 2.5rem 4.5rem;text-align:center;position:relative;overflow:hidden}
+.hero-eyebrow{display:inline-block;background:rgba(29,158,117,0.15);color:var(--g100);border:0.5px solid rgba(29,158,117,0.25);border-radius:100px;font-size:11px;font-weight:400;padding:5px 18px;margin-bottom:1.5rem;letter-spacing:0.08em;text-transform:uppercase}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,56px);font-weight:300;color:#fff;line-height:1.15;margin-bottom:1.25rem;max-width:720px;margin-left:auto;margin-right:auto}
+.hero h1 em{font-style:italic;color:var(--g100)}
+.hero-sub{font-size:16px;font-weight:300;color:rgba(255,255,255,0.6);max-width:520px;margin:0 auto 2.5rem;line-height:1.75}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem}
+.btn-hero{background:var(--g600);color:#fff;border:none;border-radius:8px;padding:0.9rem 2.25rem;font-size:15px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-block}
+.btn-hero:hover{background:var(--g700)}
+.btn-hero-outline{background:transparent;color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.2);border-radius:8px;padding:0.9rem 2.25rem;font-size:15px;font-weight:400;cursor:pointer;font-family:'DM Sans',sans-serif;text-decoration:none;display:inline-block}
+.hero-note{font-size:12px;color:rgba(255,255,255,0.3);letter-spacing:0.03em}
+.hero-legal{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;margin-top:3rem;padding-top:2rem;border-top:0.5px solid rgba(255,255,255,0.08)}
+.legal-badge{font-size:11px;color:rgba(255,255,255,0.35);display:flex;align-items:center;gap:7px}
+.legal-dot{width:5px;height:5px;border-radius:50%;background:var(--g600);flex-shrink:0}
+
+/* SECTIONS */
+section{padding:4.5rem 2.5rem}
+.section-inner{max-width:980px;margin:0 auto}
+.section-label{font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--g700);margin-bottom:0.75rem}
+.section-h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,38px);font-weight:300;color:var(--text-primary);line-height:1.2;margin-bottom:1rem}
+.section-sub{font-size:15px;font-weight:300;color:var(--text-secondary);line-height:1.75;max-width:560px}
+.divider{height:0.5px;background:var(--border)}
+.alt-bg{background:var(--slate-50)}
+
+/* MODULOS */
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;margin-top:2.5rem}
+.mod-card{background:#fff;border-radius:14px;padding:1.75rem;border:0.5px solid var(--border);position:relative;overflow:hidden}
+.mod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--g700)}
+.mod-num{font-family:'Playfair Display',serif;font-size:36px;font-weight:300;color:var(--g600);opacity:0.35;line-height:1;margin-bottom:0.75rem}
+.mod-title{font-size:15px;font-weight:500;color:var(--text-primary);margin-bottom:0.5rem}
+.mod-desc{font-size:13px;font-weight:300;color:var(--text-secondary);line-height:1.65;margin-bottom:1.1rem}
+.mod-tags{display:flex;flex-wrap:wrap;gap:6px}
+.mod-tag{font-size:11px;background:var(--g50);color:var(--g800);border-radius:4px;padding:3px 9px;font-weight:400}
+
+/* COMO FUNCIONA */
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0;margin-top:2.5rem}
+.how-step{padding:1.5rem;text-align:center}
+.how-circle{width:52px;height:52px;border-radius:50%;background:var(--g50);border:1px solid var(--g100);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-family:'Playfair Display',serif;font-size:20px;font-weight:400;color:var(--g700)}
+.how-title{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:0.4rem}
+.how-desc{font-size:13px;font-weight:300;color:var(--text-secondary);line-height:1.6}
+
+/* PERSONAS */
+.personas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-top:2.5rem}
+.persona-card{border-radius:12px;padding:1.25rem;border:0.5px solid var(--border);background:var(--slate-50)}
+.persona-icon{width:38px;height:38px;border-radius:9px;background:var(--g50);display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;font-size:18px}
+.persona-name{font-size:13px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.persona-desc{font-size:12px;font-weight:300;color:var(--text-secondary);line-height:1.55}
+
+/* PRICING */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:2.5rem}
+.plan-card{border-radius:14px;padding:1.75rem;border:0.5px solid var(--border);background:#fff}
+.plan-card.featured{border:1.5px solid var(--g700)}
+.plan-badge{display:inline-block;background:var(--g700);color:#fff;font-size:10px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;padding:3px 11px;border-radius:100px;margin-bottom:1rem}
+.plan-name{font-size:12px;font-weight:500;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem}
+.plan-price{font-family:'Playfair Display',serif;font-size:38px;font-weight:300;color:var(--text-primary);line-height:1}
+.plan-price span{font-family:'DM Sans',sans-serif;font-size:13px;font-weight:300;color:var(--text-tertiary)}
+.plan-desc{font-size:12px;color:var(--text-tertiary);margin:0.5rem 0 1.25rem;font-weight:300}
+.plan-features{list-style:none;margin-bottom:1.5rem}
+.plan-features li{font-size:13px;font-weight:300;color:var(--text-secondary);padding:0.4rem 0;border-bottom:0.5px solid var(--border);display:flex;align-items:center;gap:9px}
+.plan-features li:last-child{border-bottom:none}
+.check{width:15px;height:15px;border-radius:50%;background:var(--g50);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:9px;color:var(--g700)}
+.btn-plan{width:100%;border-radius:8px;padding:0.8rem;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;border:none}
+.btn-plan-green{background:var(--g700);color:#fff}
+.btn-plan-green:hover{background:var(--g800)}
+.btn-plan-outline{background:transparent;color:var(--text-primary);border:0.5px solid var(--border);cursor:pointer}
+
+/* DEPOIMENTOS */
+.testimonials-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin-top:2.5rem}
+.t-card{border-radius:14px;padding:1.5rem;border:0.5px solid var(--border);background:var(--slate-50)}
+.t-stars{color:var(--amber);font-size:14px;margin-bottom:0.75rem;letter-spacing:2px}
+.t-text{font-size:13px;font-weight:300;color:var(--text-primary);line-height:1.75;margin-bottom:1rem;font-style:italic}
+.t-author{display:flex;align-items:center;gap:10px}
+.t-avatar{width:38px;height:38px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;color:var(--g800);flex-shrink:0}
+.t-name{font-size:13px;font-weight:500;color:var(--text-primary)}
+.t-role{font-size:11px;color:var(--text-tertiary)}
+
+/* CTA FINAL */
+.cta-section{background:var(--g900);padding:4.5rem 2.5rem;text-align:center}
+.cta-h2{font-family:'Playfair Display',serif;font-size:clamp(26px,3.5vw,38px);font-weight:300;color:#fff;margin-bottom:1rem}
+.cta-sub{font-size:15px;font-weight:300;color:rgba(255,255,255,0.5);margin-bottom:2rem;max-width:440px;margin-left:auto;margin-right:auto;line-height:1.75}
+.cta-note{font-size:12px;color:rgba(255,255,255,0.25);margin-top:1rem}
+.cta-link{color:rgba(255,255,255,0.45);text-decoration:underline;cursor:pointer}
+
+/* FOOTER */
+footer{padding:2.5rem;border-top:0.5px solid var(--border)}
+.footer-inner{max-width:980px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-family:'Playfair Display',serif;font-size:18px;font-weight:400;color:var(--text-primary)}
+.footer-logo span{color:var(--g700)}
+.footer-links{display:flex;gap:1.5rem;flex-wrap:wrap}
+.footer-link{font-size:12px;color:var(--text-tertiary);text-decoration:none}
+.footer-legal{max-width:980px;margin:1rem auto 0;padding-top:1rem;border-top:0.5px solid var(--border);font-size:11px;color:var(--text-tertiary);line-height:1.65}
+</style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
-  <div class="container nav-inner">
-    <div class="nav-brand">
-      <div class="nav-logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
-        </svg>
-      </div>
-      <div class="nav-brand-text">
-        <h1>MatriculAI</h1>
-        <p>Due Diligence Imobiliária</p>
-      </div>
-    </div>
-    <div class="nav-actions">
-      <a href="https://matriculai-omega.vercel.app/login" class="btn-ghost-nav">Entrar</a>
-      <a href="https://matriculai-omega.vercel.app/signup" class="btn-pill-white">
-        Testar grátis
-      </a>
-    </div>
+  <a href="#" class="logo">Imov<span>alia</span></a>
+  <div class="nav-links">
+    <a href="#como-funciona" class="nav-link">Como funciona</a>
+    <a href="#planos" class="nav-link">Planos</a>
+    <a href="avaliadores.html" class="nav-link">Para avaliadores</a>
+    <a href="/login" class="btn-outline">Entrar</a>
+    <a href="/signup" class="btn-primary">Criar conta grátis</a>
   </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
-  <div class="container">
-    <div class="hero-badge">
-      <span class="hero-badge-dot"></span>
-      Análise em segundos, não em horas
-    </div>
-    <h2>Due diligence imobiliária<br /><span>com inteligência artificial</span></h2>
-    <p>
-      Faça upload da matrícula. A IA analisa ônus, gravames, penhorabilidade e avaliação de mercado — tudo de uma vez.
-    </p>
-    <div class="hero-cta">
-      <a href="https://matriculai-omega.vercel.app/signup" class="btn-pill-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-        </svg>
-        Começar gratuitamente
-      </a>
-      <a href="#como-funciona" class="btn-outline-white">Ver como funciona</a>
-    </div>
-    <p class="hero-note">3 análises gratuitas · Sem cartão de crédito</p>
+  <div class="hero-eyebrow">Inteligência artificial para o mercado imobiliário</div>
+  <h1>Da matrícula ao fechamento,<br><em>com segurança jurídica.</em></h1>
+  <p class="hero-sub">Analise matrículas, gere contratos e acesse avaliadores certificados — tudo em uma só plataforma, em minutos.</p>
+  <div class="hero-cta">
+    <a href="/signup" class="btn-hero">Começar gratuitamente</a>
+    <a href="#como-funciona" class="btn-hero-outline">Ver como funciona</a>
+  </div>
+  <p class="hero-note">3 análises gratuitas · Sem cartão de crédito · Resultado em minutos</p>
+  <div class="hero-legal">
+    <div class="legal-badge"><div class="legal-dot"></div>Lei 6.015/73 — Registros Públicos</div>
+    <div class="legal-badge"><div class="legal-dot"></div>CPC art. 833 — Penhorabilidade</div>
+    <div class="legal-badge"><div class="legal-dot"></div>CLT art. 649</div>
+    <div class="legal-badge"><div class="legal-dot"></div>NBR 14.653 — Avaliações</div>
   </div>
 </section>
 
-<!-- LOGOS STRIP -->
-<div class="logos-strip">
-  <div class="container logos-strip-inner">
-    <span class="logos-strip-label">Baseado em normas e legislação:</span>
-    <div class="logos-strip-items">
-      <span class="logo-pill">Lei de Registros Públicos (6.015/73)</span>
-      <span class="logo-pill">CPC — Art. 833 (Penhorabilidade)</span>
-      <span class="logo-pill">CLT — Art. 649</span>
-      <span class="logo-pill">NBR 14653 (Avaliação)</span>
-    </div>
-  </div>
-</div>
+<div class="divider"></div>
 
-<!-- MODULES -->
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-header">
-      <span class="section-label">O que analisamos</span>
-      <h2 class="section-title">3 perspectivas em uma só análise</h2>
-      <p class="section-sub">Cada módulo usa um prompt especializado com o contexto legal e técnico apropriado.</p>
-    </div>
-    <div class="modules-grid">
-
-      <div class="module-card">
-        <div class="module-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
-          </svg>
-        </div>
-        <div class="module-number">Módulo 1</div>
-        <h3>Análise Registral</h3>
-        <p>Extrai e interpreta todos os elementos da matrícula: histórico de transmissões, ônus reais, gravames, averbações e cadeia dominial.</p>
-        <div class="module-tags">
-          <span class="tag">Ônus e gravames</span>
-          <span class="tag">Cadeia dominial</span>
-          <span class="tag">Averbações</span>
+<section>
+  <div class="section-inner">
+    <div class="section-label">O que o Imovalia faz</div>
+    <h2 class="section-h2">3 módulos especializados.<br>1 único upload.</h2>
+    <p class="section-sub">Cada módulo usa um prompt jurídico especializado. Você envia a matrícula, o Imovalia entrega três análises paralelas em minutos.</p>
+    <div class="mod-grid">
+      <div class="mod-card">
+        <div class="mod-num">01</div>
+        <div class="mod-title">Análise registral</div>
+        <div class="mod-desc">Lemos a matrícula como um oficial de registro. Cadeia dominial, ônus, gravames, averbações e histórico de transmissões.</div>
+        <div class="mod-tags">
+          <span class="mod-tag">Cadeia dominial</span>
+          <span class="mod-tag">Ônus reais</span>
+          <span class="mod-tag">Gravames</span>
+          <span class="mod-tag">Averbações</span>
         </div>
       </div>
-
-      <div class="module-card">
-        <div class="module-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-        </div>
-        <div class="module-number">Módulo 2</div>
-        <h3>Penhorabilidade CPC/CLT</h3>
-        <p>Avalia se o imóvel é penhorável conforme CPC art. 833 e CLT art. 649 — perspectiva de advogado de execução.</p>
-        <div class="module-tags">
-          <span class="tag">CPC art. 833</span>
-          <span class="tag">CLT art. 649</span>
-          <span class="tag">Bem de família</span>
+      <div class="mod-card">
+        <div class="mod-num">02</div>
+        <div class="mod-title">Penhorabilidade</div>
+        <div class="mod-desc">Saiba se o bem pode ser penhorado antes de ajuizar. Perspectiva do credor (CPC/CLT) e fundamentos defensivos do devedor.</div>
+        <div class="mod-tags">
+          <span class="mod-tag">CPC art. 833</span>
+          <span class="mod-tag">CLT art. 649</span>
+          <span class="mod-tag">Bem de família</span>
         </div>
       </div>
-
-      <div class="module-card">
-        <div class="module-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-          </svg>
-        </div>
-        <div class="module-number">Módulo 3</div>
-        <h3>Avaliação de Mercado</h3>
-        <p>Estima valor de mercado com web search em tempo real, comparando dados públicos e tendências da região do imóvel.</p>
-        <div class="module-tags">
-          <span class="tag">Web search em tempo real</span>
-          <span class="tag">NBR 14653</span>
-          <span class="tag">Valor estimado</span>
+      <div class="mod-card">
+        <div class="mod-num">03</div>
+        <div class="mod-title">Avaliação de mercado</div>
+        <div class="mod-desc">Estimativa de valor com web search em tempo real, comparando dados públicos e tendências da região do imóvel.</div>
+        <div class="mod-tags">
+          <span class="mod-tag">Web search</span>
+          <span class="mod-tag">NBR 14.653</span>
+          <span class="mod-tag">Valor estimado</span>
         </div>
       </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section" id="como-funciona">
-  <div class="container">
-    <div class="section-header" style="text-align:center;">
-      <span class="section-label">Como funciona</span>
-      <h2 class="section-title" style="margin:0 auto;">De PDF para relatório em 4 passos</h2>
-    </div>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <h3>Upload do PDF</h3>
-        <p>Envie a certidão de matrícula atualizada em formato PDF.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <h3>OCR + Extração</h3>
-        <p>A IA lê e interpreta o documento, identificando todas as informações relevantes.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <h3>Análise 3 módulos</h3>
-        <p>Os 3 módulos especializados rodam em paralelo, cada um com seu próprio contexto legal.</p>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <h3>Relatório + Export</h3>
-        <p>Visualize na plataforma e exporte em PDF ou DOCX para seu cliente ou processo.</p>
+      <div class="mod-card">
+        <div class="mod-num">+</div>
+        <div class="mod-title">Geração de documentos</div>
+        <div class="mod-desc">Minutas de escritura, compra e venda e cessão geradas diretamente dos dados da matrícula. Sem copiar e colar.</div>
+        <div class="mod-tags">
+          <span class="mod-tag">Escritura</span>
+          <span class="mod-tag">Compra e venda</span>
+          <span class="mod-tag">Cessão</span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="section section-alt" id="planos">
-  <div class="container">
-    <div class="section-header" style="text-align:center;">
-      <span class="section-label">Planos</span>
-      <h2 class="section-title" style="margin:0 auto;">Simples e sem surpresas</h2>
+<div class="divider"></div>
+
+<section class="alt-bg" id="como-funciona">
+  <div class="section-inner">
+    <div class="section-label">Como funciona</div>
+    <h2 class="section-h2">De PDF a relatório em 4 passos.</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="how-circle">1</div>
+        <div class="how-title">Upload do PDF</div>
+        <div class="how-desc">Envie a certidão de matrícula atualizada em formato PDF.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-circle">2</div>
+        <div class="how-title">OCR + extração</div>
+        <div class="how-desc">A IA lê e interpreta o documento, identificando todos os dados relevantes.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-circle">3</div>
+        <div class="how-title">Análise paralela</div>
+        <div class="how-desc">Os 3 módulos rodam simultaneamente, cada um com seu contexto jurídico.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-circle">4</div>
+        <div class="how-title">Relatório + export</div>
+        <div class="how-desc">Visualize na plataforma e exporte em PDF ou DOCX para seu cliente ou processo.</div>
+      </div>
     </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section>
+  <div class="section-inner">
+    <div class="section-label">Para quem é</div>
+    <h2 class="section-h2">Feito para quem trabalha<br>com imóveis de verdade.</h2>
+    <div class="personas-grid">
+      <div class="persona-card">
+        <div class="persona-icon">⚖️</div>
+        <div class="persona-name">Advogado imobiliário</div>
+        <div class="persona-desc">Due diligence em transações, garantias reais e financiamentos.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-icon">📋</div>
+        <div class="persona-name">Advogado de execução</div>
+        <div class="persona-desc">Análise de penhorabilidade e constrição judicial antes de peticionar.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-icon">🏠</div>
+        <div class="persona-name">Corretor / Imobiliária</div>
+        <div class="persona-desc">Segurança jurídica para o comprador antes do fechamento.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-icon">🏦</div>
+        <div class="persona-name">Credor / Fundo</div>
+        <div class="persona-desc">Análise de garantias reais em operações de crédito estruturado.</div>
+      </div>
+      <div class="persona-card">
+        <div class="persona-icon">🌾</div>
+        <div class="persona-name">Agronegócio</div>
+        <div class="persona-desc">Rurais, gleba, CAR e cadeia dominial de imóveis complexos.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section class="alt-bg" id="planos">
+  <div class="section-inner">
+    <div class="section-label">Planos</div>
+    <h2 class="section-h2">Simples e sem surpresas.</h2>
+    <p class="section-sub">Comece grátis. Escale conforme o volume de análises do seu escritório ou operação.</p>
     <div class="pricing-grid">
-
       <div class="plan-card">
         <div class="plan-name">Freemium</div>
-        <div class="plan-price">R$0</div>
-        <div class="plan-price-note">para começar</div>
+        <div class="plan-price">R$ 0</div>
+        <div class="plan-desc">para começar</div>
         <ul class="plan-features">
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            3 análises completas gratuitas
-          </li>
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            Todos os 3 módulos de análise
-          </li>
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            Exportação PDF e DOCX
-          </li>
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            Sem cartão de crédito
-          </li>
+          <li><div class="check">✓</div>3 análises completas gratuitas</li>
+          <li><div class="check">✓</div>Todos os 3 módulos</li>
+          <li><div class="check">✓</div>Exportação PDF e DOCX</li>
+          <li><div class="check">✓</div>Sem cartão de crédito</li>
         </ul>
-        <a href="https://matriculai-omega.vercel.app/signup" class="btn-plan" style="background:rgba(12,68,124,0.08);color:var(--navy);border:1.5px solid rgba(12,68,124,0.15);">
-          Começar grátis
-        </a>
+        <button class="btn-plan btn-plan-outline" onclick="location.href='/signup'">Começar grátis</button>
       </div>
-
       <div class="plan-card featured">
         <div class="plan-badge">Mais popular</div>
         <div class="plan-name">Standard</div>
-        <div class="plan-price"><sup>R$</sup>497</div>
-        <div class="plan-price-note">por mês</div>
+        <div class="plan-price">R$ 497 <span>/ mês</span></div>
+        <div class="plan-desc">para escritórios e profissionais</div>
         <ul class="plan-features">
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            30 análises por mês
-          </li>
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            Todos os 3 módulos
-          </li>
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            Exportação PDF e DOCX
-          </li>
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            Histórico completo de análises
-          </li>
-          <li>
-            <div class="check">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-            </div>
-            Suporte prioritário
-          </li>
+          <li><div class="check">✓</div>30 análises por mês</li>
+          <li><div class="check">✓</div>Todos os 3 módulos</li>
+          <li><div class="check">✓</div>Geração de documentos</li>
+          <li><div class="check">✓</div>Histórico completo</li>
+          <li><div class="check">✓</div>Suporte prioritário</li>
         </ul>
-        <a href="https://matriculai-omega.vercel.app/signup" class="btn-plan btn-plan-solid">
-          Criar conta grátis
-        </a>
+        <button class="btn-plan btn-plan-green" onclick="location.href='/signup'">Criar conta grátis</button>
       </div>
-
+      <div class="plan-card">
+        <div class="plan-name">Business / Enterprise</div>
+        <div class="plan-price" style="font-size:24px;padding-top:6px">Sob consulta</div>
+        <div class="plan-desc">para imobiliárias, fundos e legaltech</div>
+        <ul class="plan-features">
+          <li><div class="check">✓</div>Volume ilimitado</li>
+          <li><div class="check">✓</div>API de integração</li>
+          <li><div class="check">✓</div>Marketplace de avaliadores</li>
+          <li><div class="check">✓</div>SLA e suporte dedicado</li>
+          <li><div class="check">✓</div>White label (sob consulta)</li>
+        </ul>
+        <button class="btn-plan btn-plan-outline">Falar com a equipe</button>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- TESTIMONIALS -->
-<section class="section">
-  <div class="container">
-    <div class="section-header" style="text-align:center;">
-      <span class="section-label">Depoimentos</span>
-      <h2 class="section-title" style="margin:0 auto;">Quem já usa o MatriculAI</h2>
-    </div>
-    <div class="testimonial-grid">
+<div class="divider"></div>
 
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"O que antes levava 2 horas de análise manual, o MatriculAI entrega em menos de 2 minutos. Indispensável para due diligence de alto volume."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">RL</div>
+<section>
+  <div class="section-inner">
+    <div class="section-label">Depoimentos</div>
+    <h2 class="section-h2">Quem já usa o Imovalia.</h2>
+    <div class="testimonials-grid">
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"O que antes levava 2 horas de análise manual, o Imovalia entrega em menos de 2 minutos. Indispensável para due diligence de alto volume."</div>
+        <div class="t-author">
+          <div class="t-avatar">RL</div>
           <div>
-            <div class="author-name">Rafael Lima</div>
-            <div class="author-role">Advogado Imobiliário · São Paulo</div>
+            <div class="t-name">Rafael Lima</div>
+            <div class="t-role">Advogado Imobiliário · São Paulo</div>
           </div>
         </div>
       </div>
-
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"A análise de penhorabilidade é cirúrgica. Já encontrei dois casos que passariam despercebidos numa leitura manual. Excelente ferramenta."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">CA</div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"A análise de penhorabilidade é cirúrgica. Já encontrei dois casos que passariam despercebidos numa leitura manual."</div>
+        <div class="t-author">
+          <div class="t-avatar">CA</div>
           <div>
-            <div class="author-name">Camila Alves</div>
-            <div class="author-role">Procuradora · Curitiba</div>
+            <div class="t-name">Camila Alves</div>
+            <div class="t-role">Procuradora · Curitiba</div>
           </div>
         </div>
       </div>
-
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <p class="testimonial-text">"Uso no escritório para triagem de imóveis em operações de crédito. A exportação em DOCX facilita muito a integração com nossos pareceres."</p>
-        <div class="testimonial-author">
-          <div class="author-avatar">MF</div>
+      <div class="t-card">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-text">"Uso no escritório para triagem de imóveis em operações de crédito. A exportação em DOCX facilita a integração com nossos pareceres."</div>
+        <div class="t-author">
+          <div class="t-avatar">MF</div>
           <div>
-            <div class="author-name">Marcos Figueiredo</div>
-            <div class="author-role">Gerente Jurídico · Fintech</div>
+            <div class="t-name">Marcos Figueiredo</div>
+            <div class="t-role">Gerente Jurídico · Fintech</div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- FINAL CTA -->
+<div class="divider"></div>
+
 <section class="cta-section">
-  <div class="container">
-    <h2>Comece agora, sem compromisso</h2>
-    <p>3 análises gratuitas para você testar com suas próprias matrículas.</p>
-    <a href="https://matriculai-omega.vercel.app/signup" class="btn-pill-primary" style="font-size:16px; padding:16px 40px;">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/>
-      </svg>
-      Criar conta grátis
-    </a>
-    <p style="margin-top:16px; font-size:13px; color:rgba(255,255,255,0.4);">
-      Minuta gerada por IA — revisar antes de uso oficial
-    </p>
-  </div>
+  <h2 class="cta-h2">Comece agora, sem compromisso.</h2>
+  <p class="cta-sub">3 análises completas gratuitas para testar com suas próprias matrículas. Sem cartão de crédito.</p>
+  <a href="/signup" class="btn-hero">Criar conta grátis</a>
+  <p class="cta-note">Já tem conta? <span class="cta-link" onclick="location.href='/login'">Entrar</span></p>
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <div class="container">
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <h3>MatriculAI</h3>
-        <p>Due diligence imobiliária com inteligência artificial. Para advogados, operações jurídicas e gestores de crédito.</p>
-        <p class="footer-disclaimer" style="margin-top:12px;">Análises geradas por IA para fins de auxílio técnico. Não substituem a avaliação de profissional habilitado.</p>
-      </div>
-      <div class="footer-links">
-        <h4>Produto</h4>
-        <ul>
-          <li><a href="#como-funciona">Como funciona</a></li>
-          <li><a href="#planos">Planos e preços</a></li>
-          <li><a href="https://matriculai-omega.vercel.app/signup">Criar conta</a></li>
-        </ul>
-      </div>
-      <div class="footer-links">
-        <h4>Conta</h4>
-        <ul>
-          <li><a href="https://matriculai-omega.vercel.app/login">Entrar</a></li>
-          <li><a href="https://matriculai-omega.vercel.app/signup">Cadastrar</a></li>
-        </ul>
-      </div>
+  <div class="footer-inner">
+    <div class="footer-logo">Imov<span>alia</span></div>
+    <div class="footer-links">
+      <a href="#como-funciona" class="footer-link">Como funciona</a>
+      <a href="#planos" class="footer-link">Planos</a>
+      <a href="avaliadores.html" class="footer-link">Para avaliadores</a>
+      <a href="/login" class="footer-link">Entrar</a>
+      <a href="/signup" class="footer-link">Cadastrar</a>
     </div>
-    <div class="footer-bottom">
-      <span>© 2026 MatriculAI. Todos os direitos reservados.</span>
-      <span>Desenvolvido com Claude AI</span>
-    </div>
+  </div>
+  <div class="footer-legal">
+    Análises geradas por IA para fins de auxílio técnico. Não substituem a avaliação de profissional habilitado. · © 2026 Imovalia. Todos os direitos reservados. · Desenvolvido com Claude AI
   </div>
 </footer>
 

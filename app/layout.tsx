@@ -1,17 +1,17 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 
-const poppins = Poppins({
+const dmSans = DM_Sans({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["300", "400", "500"],
 });
 
 export const metadata: Metadata = {
-  title: "MatriculAI - Due Diligence de Matrículas Imobiliárias",
-  description: "Análise inteligente de matrículas imobiliárias com extração automática de dados, score de risco e relatórios completos",
+  title: "Imovalia — Inteligência imobiliária",
+  description: "Analise matrículas, gere contratos e acesse avaliadores certificados — tudo em uma só plataforma.",
 };
 
 export default function RootLayout({
@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body
-        className={`${poppins.variable} antialiased`}
+        className={`${dmSans.variable} antialiased`}
       >
         <AuthProvider>
           {children}
