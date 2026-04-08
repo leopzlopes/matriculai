@@ -1,8 +1,10 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { X, Award, Star } from 'lucide-react';
-import type { AvaliadorPerfil } from '@/lib/avaliacoes/types';
+import type { AvaliadorPerfil, AvaliacaoReview } from '@/lib/avaliacoes/types';
 import { LABEL_TIPO_IMOVEL } from '@/lib/avaliacoes/types';
+import { getReviewsDoAvaliador } from '@/lib/actions/avaliacoes';
 
 interface Props {
   perfil: AvaliadorPerfil;
@@ -25,6 +27,14 @@ function StarRating({ nota }: { nota: number }) {
 }
 
 export function AvaliadorDrawer({ perfil, onClose }: Props) {
+  const [reviews, setReviews] = useState<AvaliacaoReview[]>([]);
+
+  useEffect(() => {
+    if (perfil.total_avaliacoes > 0) {
+      getReviewsDoAvaliador(perfil.user_id).then(setReviews);
+    }
+  }, [perfil.user_id, perfil.total_avaliacoes]);
+
   return (
     <>
       {/* Backdrop */}
@@ -112,6 +122,35 @@ export function AvaliadorDrawer({ perfil, onClose }: Props) {
             <div>
               <p className="text-xs font-semibold text-slate-700 mb-1.5 uppercase tracking-wide">Sobre</p>
               <p className="text-sm text-slate-600 leading-relaxed">{perfil.bio}</p>
+            </div>
+          )}
+
+          {/* Reviews recentes */}
+          {reviews.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold text-slate-700 mb-3 uppercase tracking-wide">
+                Avaliações recentes
+              </p>
+              <div className="space-y-3">
+                {reviews.map((r) => (
+                  <div key={r.id} className="bg-slate-50 rounded-xl p-3">
+                    <div className="flex items-center gap-0.5 mb-1.5">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star
+                          key={i}
+                          className={`w-3 h-3 ${i <= (r.nota_ao_avaliador ?? 0) ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-200'}`}
+                        />
+                      ))}
+                      <span className="ml-1.5 text-xs text-slate-400">
+                        {new Date(r.created_at).toLocaleDateString('pt-BR', { month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                    {r.comentario_avaliador && (
+                      <p className="text-xs text-slate-600 leading-relaxed">{r.comentario_avaliador}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { getSolicitacao, getPropostasDaSolicitacao } from '@/lib/actions/avaliacoes';
+import { getSolicitacao, getPropostasDaSolicitacao, getReviewsDaSolicitacao } from '@/lib/actions/avaliacoes';
 import { getProfileData } from '@/lib/actions/profile';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import {
@@ -38,6 +38,10 @@ export default async function SolicitacaoDetalhePage({ params }: PageProps) {
   const minhaPropostaId = isAvaliador
     ? propostas.find((p) => p.avaliador_id === user.id)?.id
     : undefined;
+
+  // Reviews (somente carrega se solicitação concluída)
+  const review = sol.status === 'concluida' ? await getReviewsDaSolicitacao(id) : null;
+  const avaliadorNome = propostas.find((p) => p.avaliador_id === sol.avaliador_id)?.avaliador?.nome;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -88,6 +92,8 @@ export default async function SolicitacaoDetalhePage({ params }: PageProps) {
         isDono={isDono}
         isAvaliador={isAvaliador}
         minhaPropostaId={minhaPropostaId}
+        review={review}
+        avaliadorNome={avaliadorNome}
       />
     </div>
   );

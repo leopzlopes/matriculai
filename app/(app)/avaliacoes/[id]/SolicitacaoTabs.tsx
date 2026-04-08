@@ -8,7 +8,8 @@ import { aceitarProposta, recusarProposta } from '@/lib/actions/avaliacoes';
 import { PropostaForm } from './PropostaForm';
 import { AvaliadorDrawer } from './AvaliadorDrawer';
 import { LaudoSection } from './LaudoSection';
-import type { SolicitacaoSalva, PropostaSalva } from '@/lib/avaliacoes/types';
+import { ReviewSection } from './ReviewSection';
+import type { SolicitacaoSalva, PropostaSalva, AvaliacaoReview } from '@/lib/avaliacoes/types';
 import {
   LABEL_TIPO_IMOVEL,
   LABEL_FINALIDADE,
@@ -240,11 +241,13 @@ interface Props {
   isDono: boolean;
   isAvaliador: boolean;
   minhaPropostaId?: string;
+  review: AvaliacaoReview | null;
+  avaliadorNome?: string;
 }
 
-export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, minhaPropostaId }: Props) {
+export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, minhaPropostaId, review, avaliadorNome }: Props) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<'detalhes' | 'propostas' | 'chat' | 'proposta_form' | 'entrega'>('detalhes');
+  const [activeTab, setActiveTab] = useState<'detalhes' | 'propostas' | 'chat' | 'proposta_form' | 'entrega' | 'avaliacao'>('detalhes');
   const [propostasState, setPropostasState] = useState(propostas);
   const [loading, setLoading] = useState<string | null>(null);
   const [error, setError] = useState('');
@@ -290,11 +293,14 @@ export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, m
     );
   }
 
+  const podeAvaliar = (isDono || isAvaliador) && sol.status === 'concluida';
+
   const tabs = [
     { id: 'detalhes', label: 'Detalhes' },
     ...(isDono ? [{ id: 'propostas', label: `Propostas (${totalPropostas})` }] : []),
     ...(chatPropostaId ? [{ id: 'chat', label: 'Mensagens' }] : []),
     ...(temEntrega ? [{ id: 'entrega', label: 'Entrega' }] : []),
+    ...(podeAvaliar ? [{ id: 'avaliacao', label: 'Avaliação' }] : []),
   ] as { id: string; label: string }[];
 
   return (
@@ -409,6 +415,17 @@ export function SolicitacaoTabs({ sol, propostas, userId, isDono, isAvaliador, m
         <div className="bg-white border border-black/[0.08] rounded-2xl p-10 text-center">
           <p className="text-sm text-slate-400">Aguardando confirmação do pagamento...</p>
         </div>
+      )}
+
+      {/* Avaliação mútua */}
+      {activeTab === 'avaliacao' && podeAvaliar && (
+        <ReviewSection
+          solicitacaoId={sol.id}
+          isDono={isDono}
+          isAvaliador={isAvaliador && !isDono}
+          review={review}
+          avaliadorNome={avaliadorNome}
+        />
       )}
 
       {/* Ícones não usados em JSX mas importados — suprimir lint */}

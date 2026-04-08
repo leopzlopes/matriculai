@@ -578,6 +578,142 @@ export async function confirmarRecebimento(
 }
 
 // -------------------------------------------------------
+// Reviews
+// -------------------------------------------------------
+
+export async function criarReview(
+  solicitacaoId: string,
+  nota: number,
+  comentario: string
+): Promise<{ error?: string }> {
+  try {
+    if (nota < 1 || nota > 5) return { error: 'Nota deve ser entre 1 e 5.' };
+
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: 'Não autenticado' };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: sol } = await (supabase as any)
+      .from('avaliacoes_solicitacoes')
+      .select('id, user_id, avaliador_id, status')
+      .eq('id', solicitacaoId)
+      .single();
+
+    if (!sol) return { error: 'Solicitação não encontrada' };
+    if (sol.status !== 'concluida') return { error: 'Avaliação só é possível após a conclusão.' };
+
+    const isCliente = sol.user_id === user.id;
+    const isAvaliador = sol.avaliador_id === user.id;
+    if (!isCliente && !isAvaliador) return { error: 'Sem permissão' };
+
+    // Verificar se já existe review desta solicitação para este usuário
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: existing } = await (supabase as any)
+      .from('avaliacoes_reviews')
+      .select('id, nota_ao_avaliador, nota_ao_cliente')
+      .eq('solicitacao_id', solicitacaoId)
+      .single();
+
+    if (existing) {
+      // Já existe registro — verificar se quem chama já avaliou
+      if (isCliente && existing.nota_ao_avaliador !== null) return { error: 'Você já avaliou esta avaliação.' };
+      if (isAvaliador && existing.nota_ao_cliente !== null) return { error: 'Você já avaliou este cliente.' };
+
+      // Atualizar o campo correto
+      const update = isCliente
+        ? { nota_ao_avaliador: nota, comentario_avaliador: comentario.trim() || null }
+        : { nota_ao_cliente: nota, comentario_cliente: comentario.trim() || null };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateErr } = await (supabase as any)
+        .from('avaliacoes_reviews')
+        .update(update)
+        .eq('id', existing.id);
+
+      if (updateErr) return { error: updateErr.message };
+    } else {
+      // Criar novo registro
+      const insert = isCliente
+        ? {
+            solicitacao_id: solicitacaoId,
+            avaliador_id: sol.avaliador_id,
+            cliente_id: sol.user_id,
+            nota_ao_avaliador: nota,
+            comentario_avaliador: comentario.trim() || null,
+          }
+        : {
+            solicitacao_id: solicitacaoId,
+            avaliador_id: sol.avaliador_id,
+            cliente_id: sol.user_id,
+            nota_ao_cliente: nota,
+            comentario_cliente: comentario.trim() || null,
+          };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: insertErr } = await (supabase as any)
+        .from('avaliacoes_reviews')
+        .insert(insert);
+
+      if (insertErr) return { error: insertErr.message };
+    }
+
+    // Recalcular nota_media do avaliador
+    if (isCliente) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).rpc('recalcular_nota_media', { avaliador_uid: sol.avaliador_id });
+    }
+
+    return {};
+  } catch (e) {
+    return { error: e instanceof Error ? e.message : 'Erro ao salvar avaliação' };
+  }
+}
+
+export async function getReviewsDaSolicitacao(
+  solicitacaoId: string
+): Promise<import('@/lib/avaliacoes/types').AvaliacaoReview | null> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await (supabase as any)
+      .from('avaliacoes_reviews')
+      .select('*')
+      .eq('solicitacao_id', solicitacaoId)
+      .maybeSingle();
+
+    return data ?? null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getReviewsDoAvaliador(
+  avaliadorId: string,
+  limit = 5
+): Promise<import('@/lib/avaliacoes/types').AvaliacaoReview[]> {
+  try {
+    const supabase = await createSupabaseServerClient();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await (supabase as any)
+      .from('avaliacoes_reviews')
+      .select('*')
+      .eq('avaliador_id', avaliadorId)
+      .not('nota_ao_avaliador', 'is', null)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    return (data ?? []) as import('@/lib/avaliacoes/types').AvaliacaoReview[];
+  } catch {
+    return [];
+  }
+}
+
+// -------------------------------------------------------
 // Upload de fotos
 // -------------------------------------------------------
 
